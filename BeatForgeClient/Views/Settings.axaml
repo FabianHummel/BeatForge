@@ -1,0 +1,19 @@
+<UserControl 
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
+	x:Class="BeatForgeClient.Views.Settings"
+	Background="White"
+	Padding="5.0"
+	BorderBrush="Lightgray"
+	BorderThickness="2 0 0 0">
+	
+	<Design.DataContext>
+		<vm:SettingsViewModel/>
+	</Design.DataContext>
+	
+	<StackPanel Orientation="Vertical"
+	            Spacing="5.0">
+		<TextBlock Classes="H1" Text="Settings"/>
+	</StackPanel>
+</UserControl>

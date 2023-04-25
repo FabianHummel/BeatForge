@@ -1,0 +1,19 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
+	x:Class="BeatForgeClient.Views.Titlebar"
+	Padding="5.0"
+	Background="White">
+	
+	<Design.DataContext>
+		<vm:TitlebarViewModel/>
+	</Design.DataContext>
+	
+	<DockPanel>
+		<TextBlock 
+			DockPanel.Dock="Left"
+			Classes="H1"
+			Text="{Binding Title}"/>
+	</DockPanel>
+</UserControl>

@@ -1,0 +1,22 @@
+<UserControl 
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
+	x:Class="BeatForgeClient.Views.Channels"
+	Background="White"
+	BorderBrush="Lightgray"
+	BorderThickness="0 2 0 0">
+	
+	<Design.DataContext>
+		<vm:ChannelsViewModel/>
+	</Design.DataContext>
+	
+	<ScrollViewer HorizontalScrollBarVisibility="Auto"
+	              VerticalScrollBarVisibility="Auto">
+		<!-- <Panel DockPanel.Dock="Bottom" -->
+		<!--        Background="Red" -->
+		<!--        Width="5000.0"> -->
+		<!-- 	<TextBlock Classes="H1" Text="Channels"/> -->
+		<!-- </Panel> -->
+	</ScrollViewer>
+</UserControl>

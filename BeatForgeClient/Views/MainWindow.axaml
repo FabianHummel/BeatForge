@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:BeatForgeClient.ViewModels"
+        xmlns:view="using:BeatForgeClient.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BeatForgeClient.Views.MainWindow"
+        Title="BeatForgeClient">
+
+    <Design.DataContext>
+	    <vm:MainWindowViewModel/>
+    </Design.DataContext>
+	
+	<DockPanel LastChildFill="True">
+		<view:Settings
+			Width="200.0"
+			DockPanel.Dock="Right"
+			DataContext="{Binding 
+				SettingsViewModel}"/>
+		
+		<view:Titlebar 
+			DockPanel.Dock="Top"
+			DataContext="{Binding 
+				TitlebarViewModel}"/>
+		
+		<view:Channels
+			Height="200.0"
+			DockPanel.Dock="Bottom"
+			DataContext="{Binding 
+				ChannelsViewModel}"/>
+		
+		<view:Content
+			DataContext="{Binding
+				ContentViewModel}"/>
+	</DockPanel>
+</Window>

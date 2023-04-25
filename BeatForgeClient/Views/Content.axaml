@@ -1,0 +1,11 @@
+<UserControl 
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
+	x:Class="BeatForgeClient.Views.Content"
+	Background="White">
+	
+	<Design.DataContext>
+		<vm:ContentViewModel/>
+	</Design.DataContext>
+</UserControl>
