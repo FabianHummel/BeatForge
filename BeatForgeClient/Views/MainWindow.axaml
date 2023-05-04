@@ -16,7 +16,7 @@
 		<view:Settings
 			Width="200.0"
 			DockPanel.Dock="Right"
-			DataContext="{Binding 
+			DataContext="{Binding
 				SettingsViewModel}"/>
 		
 		<view:Titlebar 
@@ -25,13 +25,13 @@
 				TitlebarViewModel}"/>
 		
 		<view:Channels
-			Height="200.0"
+			Height="300.0"
 			DockPanel.Dock="Bottom"
-			DataContext="{Binding 
+			DataContext="{Binding
 				ChannelsViewModel}"/>
 		
-		<view:Content
-			DataContext="{Binding
-				ContentViewModel}"/>
+		<!-- <view:Content -->
+		<!-- 	DataContext="{Binding -->
+		<!-- 		ContentViewModel}"/> -->
 	</DockPanel>
 </Window>

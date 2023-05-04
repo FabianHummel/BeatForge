@@ -11,12 +11,63 @@
 		<vm:ChannelsViewModel/>
 	</Design.DataContext>
 	
-	<ScrollViewer HorizontalScrollBarVisibility="Auto"
-	              VerticalScrollBarVisibility="Auto">
-		<!-- <Panel DockPanel.Dock="Bottom" -->
-		<!--        Background="Red" -->
-		<!--        Width="5000.0"> -->
-		<!-- 	<TextBlock Classes="H1" Text="Channels"/> -->
-		<!-- </Panel> -->
-	</ScrollViewer>
+	<DockPanel LastChildFill="True">
+		<Border DockPanel.Dock="Top" 
+		        Padding="5.0">
+			<DockPanel LastChildFill="True">
+				
+				<!-- Left side - information -->
+				<TextBlock 
+					DockPanel.Dock="Left" 
+					VerticalAlignment="Center"
+					Classes="H2" 
+					Text="Channels"/>
+				
+				<!-- Right side - add new channels -->
+				<StackPanel 
+					DockPanel.Dock="Right" 
+					Orientation="Horizontal" 
+					Spacing="5.0">
+					
+					<TextBox
+						Watermark="Channel name..."
+						Width="300.0"
+						Text="{Binding 
+							NewChannelName, Mode=TwoWay}"/>
+				
+					<Button 
+						Content="Add"
+						Command="{Binding 
+							NewChannel}"/>
+					
+					<Button 
+						Content="Save Channels"
+						Command="{Binding 
+							SaveChannels}"/>
+				</StackPanel>
+				<Border />
+			</DockPanel>
+		</Border>
+		
+		<ListBox Items="{Binding SongChannels}"
+		         SelectedItem="{Binding SelectedChannel}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid ColumnDefinitions="100, 100, *"
+					      RowDefinitions="30.0">
+						<TextBox VerticalAlignment="Center" Grid.Column="0" MaxLength="32" Text="{Binding 
+								Name, Mode=TwoWay}"/>
+						<TextBox VerticalAlignment="Center" Grid.Column="1" MaxLength="32" Text="{Binding
+								Instrument.Name, Mode=TwoWay}"/>
+						<ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto">
+							<Slider Orientation="Horizontal" 
+							        VerticalAlignment="Center"
+							        Value="{Binding Volume}"
+							        Minimum="0" Maximum="100"/>
+						</ScrollViewer>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</DockPanel>
 </UserControl>

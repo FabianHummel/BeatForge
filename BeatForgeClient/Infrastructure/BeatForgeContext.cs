@@ -20,6 +20,7 @@ public class BeatForgeContext : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlite("DataSource=BeatForge.db");
+            optionsBuilder.EnableSensitiveDataLogging();
         }
     }
 

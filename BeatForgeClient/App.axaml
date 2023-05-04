@@ -1,17 +1,14 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:BeatForgeClient"
              x:Class="BeatForgeClient.App">
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
-
     <Application.Styles>
         <FluentTheme Mode="Light"/>
         
         <Style Selector="TextBlock.H1">
             <Setter Property="FontSize" Value="24.0"/>
-            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        <Style Selector="TextBlock.H2">
+            <Setter Property="FontSize" Value="18.0"/>
         </Style>
     </Application.Styles>
 </Application>

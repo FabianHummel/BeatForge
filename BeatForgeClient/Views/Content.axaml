@@ -8,4 +8,20 @@
 	<Design.DataContext>
 		<vm:ContentViewModel/>
 	</Design.DataContext>
+	
+	<UserControl.Styles>
+		<Style Selector="Panel">
+			<Setter Property="Width" Value="20.0"/>
+			<Setter Property="Height" Value="10.0"/>
+		</Style>
+	</UserControl.Styles>
+	
+	<ScrollViewer HorizontalScrollBarVisibility="Auto"
+	              VerticalScrollBarVisibility="Auto">
+		<Grid Name="Grid"
+			ColumnDefinitions="Auto"
+			RowDefinitions="Auto"
+			ShowGridLines="True">
+		</Grid>
+	</ScrollViewer>
 </UserControl>

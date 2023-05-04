@@ -1,11 +1,13 @@
-﻿using BeatForgeClient.Infrastructure;
+﻿using System;
+using BeatForgeClient.Infrastructure;
+using ReactiveUI;
 
 namespace BeatForgeClient.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly BeatForgeContext _db = new();
-    
+    public BeatForgeContext Db { get; }
+
     public TitlebarViewModel TitlebarViewModel { get; }
     public SettingsViewModel SettingsViewModel { get; }
     public ChannelsViewModel ChannelsViewModel { get; }
@@ -13,10 +15,22 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        _db.Database.EnsureCreated();
-        TitlebarViewModel = new TitlebarViewModel();
-        SettingsViewModel = new SettingsViewModel();
-        ChannelsViewModel = new ChannelsViewModel();
-        ContentViewModel = new ContentViewModel();
+        Db = new BeatForgeContext();
+        Db.SavedChanges += (_, args) =>
+        {
+            Console.WriteLine($"Saved changes ({args.EntitiesSavedCount} entities updated)");
+        };
+        TitlebarViewModel = new TitlebarViewModel(this);
+        SettingsViewModel = new SettingsViewModel(this);
+        ChannelsViewModel = new ChannelsViewModel(this);
+        ContentViewModel = new ContentViewModel(this);
+    }
+    
+    private SongDto? _song;
+
+    public SongDto? Song
+    {
+        get => _song;
+        set => this.RaiseAndSetIfChanged(ref _song, value);
     }
 }

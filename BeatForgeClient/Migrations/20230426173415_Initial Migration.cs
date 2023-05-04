@@ -9,36 +9,16 @@ namespace BeatForgeClient.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "p_preferences",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Volume = table.Column<double>(type: "REAL", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_p_preferences", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "s_song",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    PreferencesId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_s_song", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_s_song_p_preferences_PreferencesId",
-                        column: x => x.PreferencesId,
-                        principalTable: "p_preferences",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,6 +35,26 @@ namespace BeatForgeClient.Migrations
                     table.PrimaryKey("PK_c_channel", x => x.Id);
                     table.ForeignKey(
                         name: "FK_c_channel_s_song_SongId",
+                        column: x => x.SongId,
+                        principalTable: "s_song",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "p_preferences",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Volume = table.Column<double>(type: "REAL", nullable: false),
+                    SongId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_p_preferences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_p_preferences_s_song_SongId",
                         column: x => x.SongId,
                         principalTable: "s_song",
                         principalColumn: "Id",
@@ -120,9 +120,9 @@ namespace BeatForgeClient.Migrations
                 column: "ChannelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_s_song_PreferencesId",
-                table: "s_song",
-                column: "PreferencesId");
+                name: "IX_p_preferences_SongId",
+                table: "p_preferences",
+                column: "SongId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -134,13 +134,13 @@ namespace BeatForgeClient.Migrations
                 name: "n_note");
 
             migrationBuilder.DropTable(
+                name: "p_preferences");
+
+            migrationBuilder.DropTable(
                 name: "c_channel");
 
             migrationBuilder.DropTable(
                 name: "s_song");
-
-            migrationBuilder.DropTable(
-                name: "p_preferences");
         }
     }
 }

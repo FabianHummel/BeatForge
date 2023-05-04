@@ -15,5 +15,6 @@
 	<StackPanel Orientation="Vertical"
 	            Spacing="5.0">
 		<TextBlock Classes="H1" Text="Settings"/>
+		<TextBox Text="{Binding SongTitle, Mode=TwoWay}"/>
 	</StackPanel>
 </UserControl>

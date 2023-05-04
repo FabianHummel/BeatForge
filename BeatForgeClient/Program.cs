@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
 using System;
+using AutoMapper;
+using BeatForgeClient.Dto;
 using BeatForgeClient.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,12 +16,20 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        BuildContext().Database
-            .EnsureCreated();
+        var db = BuildContext().Database;
+        {
+            if (args.Length > 0 && args[0] == "--reset-db")
+            {
+                db.EnsureDeleted();
+                db.EnsureCreated();
+            }
+        }
 
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
+    
+    public static IMapper Mapper { get; } = BuildMapper();
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
@@ -34,4 +44,9 @@ internal static class Program
         optionsBuilder.UseSqlite("DataSource=BeatForge.db");
         return new BeatForgeContext(optionsBuilder.Options);
     }
+
+    public static IMapper BuildMapper() =>
+        new MapperConfiguration(cfg => 
+                cfg.AddMaps(typeof(DtoMappingProfile)))
+            .CreateMapper();
 }

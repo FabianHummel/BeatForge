@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BeatForgeClient.Migrations
 {
     [DbContext(typeof(BeatForgeContext))]
-    [Migration("20230425200451_Initial Migration")]
+    [Migration("20230426173415_Initial Migration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,10 +90,15 @@ namespace BeatForgeClient.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SongId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double>("Volume")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SongId");
 
                     b.ToTable("p_preferences");
                 });
@@ -108,12 +113,7 @@ namespace BeatForgeClient.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("PreferencesId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PreferencesId");
 
                     b.ToTable("s_song");
                 });
@@ -151,15 +151,15 @@ namespace BeatForgeClient.Migrations
                     b.Navigation("Channel");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Song", b =>
+            modelBuilder.Entity("BeatForgeClient.Infrastructure.Preferences", b =>
                 {
-                    b.HasOne("BeatForgeClient.Infrastructure.Preferences", "Preferences")
+                    b.HasOne("BeatForgeClient.Infrastructure.Song", "Song")
                         .WithMany()
-                        .HasForeignKey("PreferencesId")
+                        .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Preferences");
+                    b.Navigation("Song");
                 });
 
             modelBuilder.Entity("BeatForgeClient.Infrastructure.Channel", b =>

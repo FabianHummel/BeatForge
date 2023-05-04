@@ -29,6 +29,9 @@ namespace BeatForgeClient.Migrations
                     b.Property<int>("SongId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("Volume")
+                        .HasColumnType("REAL");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SongId");
@@ -88,10 +91,16 @@ namespace BeatForgeClient.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SongId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double>("Volume")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SongId")
+                        .IsUnique();
 
                     b.ToTable("p_preferences");
                 });
@@ -106,12 +115,7 @@ namespace BeatForgeClient.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("PreferencesId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PreferencesId");
 
                     b.ToTable("s_song");
                 });
@@ -149,15 +153,15 @@ namespace BeatForgeClient.Migrations
                     b.Navigation("Channel");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Song", b =>
+            modelBuilder.Entity("BeatForgeClient.Infrastructure.Preferences", b =>
                 {
-                    b.HasOne("BeatForgeClient.Infrastructure.Preferences", "Preferences")
-                        .WithMany()
-                        .HasForeignKey("PreferencesId")
+                    b.HasOne("BeatForgeClient.Infrastructure.Song", "Song")
+                        .WithOne("Preferences")
+                        .HasForeignKey("BeatForgeClient.Infrastructure.Preferences", "SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Preferences");
+                    b.Navigation("Song");
                 });
 
             modelBuilder.Entity("BeatForgeClient.Infrastructure.Channel", b =>
@@ -171,6 +175,9 @@ namespace BeatForgeClient.Migrations
             modelBuilder.Entity("BeatForgeClient.Infrastructure.Song", b =>
                 {
                     b.Navigation("Channels");
+
+                    b.Navigation("Preferences")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

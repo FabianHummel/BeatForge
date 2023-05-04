@@ -10,10 +10,42 @@
 		<vm:TitlebarViewModel/>
 	</Design.DataContext>
 	
-	<DockPanel>
+	<DockPanel LastChildFill="True">
 		<TextBlock 
 			DockPanel.Dock="Left"
 			Classes="H1"
 			Text="{Binding Title}"/>
+		
+		<StackPanel 
+			DockPanel.Dock="Right"
+			Orientation="Horizontal"
+			Spacing="5.0">
+			<ComboBox 
+				Items="{Binding StoredSongs}"
+				SelectedItem="{Binding MainWindowViewModel.Song, Mode=TwoWay}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			
+			<Button
+				Content="Save selected song"
+				Command="{Binding SaveSong}"/>
+			
+			<Separator />
+			
+			<TextBox
+				Watermark="Song name..."
+				Width="300.0"
+				Text="{Binding NewSongName, Mode=TwoWay}"/>
+		
+			<Button
+				Content="Create"
+				Command="{Binding NewSong}"/>
+		</StackPanel>
+		
+		<Border Background="Transparent"/>
 	</DockPanel>
 </UserControl>
