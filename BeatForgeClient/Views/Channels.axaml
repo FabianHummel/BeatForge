@@ -39,11 +39,6 @@
 						Content="Add"
 						Command="{Binding 
 							NewChannel}"/>
-					
-					<Button 
-						Content="Save Channels"
-						Command="{Binding 
-							SaveChannels}"/>
 				</StackPanel>
 				<Border />
 			</DockPanel>

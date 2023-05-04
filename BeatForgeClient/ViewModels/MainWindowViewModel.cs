@@ -18,7 +18,7 @@ public class MainWindowViewModel : ViewModelBase
         Db = new BeatForgeContext();
         Db.SavedChanges += (_, args) =>
         {
-            Console.WriteLine($"Saved changes ({args.EntitiesSavedCount} entities updated)");
+            Console.WriteLine($"\nSaved changes ({args.EntitiesSavedCount} entities updated)");
         };
         TitlebarViewModel = new TitlebarViewModel(this);
         SettingsViewModel = new SettingsViewModel(this);

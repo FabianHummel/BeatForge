@@ -10,15 +10,14 @@ public class Note
     public decimal Duration { get; set; }
     public decimal End => Start + Duration;
     public int Pitch { get; set; }
-    public Channel Channel { get; set; }
+    public virtual Channel Channel { get; set; }
 }
 
 public class NoteDto
 {
-    public int? Id { get; set; }
     public decimal? Start { get; set; }
     public decimal? Duration { get; set; }
-    public decimal? End { get; set; }
+    public decimal? End => Start + Duration;
     public int? Pitch { get; set; }
     public ChannelDto? Channel { get; set; }
 }

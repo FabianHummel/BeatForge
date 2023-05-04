@@ -19,6 +19,7 @@ public class BeatForgeContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
+            optionsBuilder.UseLazyLoadingProxies();
             optionsBuilder.UseSqlite("DataSource=BeatForge.db");
             optionsBuilder.EnableSensitiveDataLogging();
         }

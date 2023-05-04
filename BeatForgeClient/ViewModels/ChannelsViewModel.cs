@@ -11,16 +11,16 @@ namespace BeatForgeClient.ViewModels;
 
 public class ChannelsViewModel : ViewModelBase
 {
-	public MainWindowViewModel MainWindowViewModel { get; }
-	public BeatForgeContext Db => MainWindowViewModel.Db;
+	public MainWindowViewModel MainVm { get; }
+	public BeatForgeContext Db => MainVm.Db;
 
-	public ChannelsViewModel(MainWindowViewModel mainWindowViewModel)
+	public ChannelsViewModel(MainWindowViewModel mainVm)
 	{
-		MainWindowViewModel = mainWindowViewModel;
+		MainVm = mainVm;
 
-		MainWindowViewModel.PropertyChanged += (sender, args) =>
+		MainVm.PropertyChanged += (sender, args) =>
 		{
-			if (args.PropertyName == nameof(MainWindowViewModel.Song))
+			if (args.PropertyName == nameof(MainVm.Song))
 			{
 				LoadSongChannels();
 			}
@@ -35,32 +35,23 @@ public class ChannelsViewModel : ViewModelBase
 
 	public void LoadSongChannels()
 	{
-		if (MainWindowViewModel.Song == null) return;
-		Console.Write("Loading channels... ");
+		if (MainVm.Song == null) return;
+		Console.Write("\nLoading channels... ");
 
-		var channels = from c in Db.Channels
-			where c.Song.Id == MainWindowViewModel.Song.Id
-			select c;
-		
-		SongChannels.ReplaceAll(Program.Mapper
-			.ProjectTo<ChannelDto>(channels, membersToExpand: dto => new
-			{
-				dto.Instrument,
-				dto.Song
-			}));
-		
-		Console.WriteLine($"done. {SongChannels.Count} channels loaded.");
+		SongChannels.ReplaceAll(MainVm.Song.Channels);
+
+		Console.Write($"done ({SongChannels.Count} channels loaded).");
 	}
 
 	public void NewChannel()
 	{
-		if (MainWindowViewModel.Song == null) return;
-		Console.Write("Creating new channel... ");
+		if (MainVm.Song == null) return;
+		Console.Write("\nCreating new channel... ");
 		
 		var channelDto = new ChannelDto
 		{
 			Name = NewChannelName,
-			Song = MainWindowViewModel.Song,
+			Song = MainVm.Song,
 			Volume = 50.0,
 		};
 
@@ -75,51 +66,6 @@ public class ChannelsViewModel : ViewModelBase
 
 		this.RaisePropertyChanged(nameof(NewChannelName));
 		this.RaisePropertyChanged(nameof(SongChannels));
-		Console.WriteLine("done.");
-	}
-
-	public void SaveChannels()
-	{
-		if (MainWindowViewModel.Song is null) return;
-		Console.WriteLine("Saving channels... ");
-		
-		MainWindowViewModel.Song.Channels.ReplaceAll(
-			SongChannels);
-		
-		
-		
-		// MainWindowViewModel.TitlebarViewModel.SaveSong();
-
-		try
-		{
-			Console.Write("Searching for existing channels... ");
-			var channelsDb = Db.Channels.Where(c =>
-				c.Song.Id == MainWindowViewModel.Song.Id);
-			Db.Channels.RemoveRange(channelsDb);
-			Console.WriteLine($"done. {channelsDb.Count()} channels removed.");
-			
-			Console.Write("Searching for song... ");
-			var song = Db.Songs.FirstOrDefault(s =>
-				s.Id == MainWindowViewModel.Song.Id);
-			if (song is not null)
-			{
-				Db.Songs.Remove(song);
-				Console.WriteLine("done. Song removed.");
-			}
-			else
-			{
-				Console.WriteLine("done. Song not found.");
-			}
-		
-			Console.Write("Mapping channels... ");
-			var channels = Program.Mapper.Map<IEnumerable<Channel>>(SongChannels);
-			Db.Channels.AddRange(channels);
-			Db.SaveChanges();
-			Console.WriteLine("done.");
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+		Console.Write("done.");
 	}
 }

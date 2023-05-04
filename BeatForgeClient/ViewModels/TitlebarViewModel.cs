@@ -11,35 +11,82 @@ namespace BeatForgeClient.ViewModels;
 
 public class TitlebarViewModel : ViewModelBase
 {
-    public MainWindowViewModel MainWindowViewModel { get; }
-    public BeatForgeContext Db => MainWindowViewModel.Db;
+    public MainWindowViewModel MainVm { get; }
+    public BeatForgeContext Db => MainVm.Db;
     
-    public TitlebarViewModel(MainWindowViewModel mainWindowViewModel)
+    public TitlebarViewModel(MainWindowViewModel mainVm)
     {
-        MainWindowViewModel = mainWindowViewModel;
+        MainVm = mainVm;
+        PropertyChanged += (sender, args) =>
+        {
+            if (args.PropertyName == nameof(SelectedSong))
+            {
+                LoadSelectedSong();
+            }
+        };
+        
         LoadStoredSongs();
     }
 
     public string Title { get; set; } = "BeatForge";
-    
     public string NewSongName { get; set; } = string.Empty;
     
     public ObservableCollection<SongDto> StoredSongs { get; } = new();
+    private SongDto? _selectedSong;
 
+    public SongDto? SelectedSong
+    {
+        get => _selectedSong;
+        set => this.RaiseAndSetIfChanged(ref _selectedSong, value);
+    }
+
+    /// <summary>
+    /// Loads all songs from the database and into the
+    /// <see cref="StoredSongs"/> collection.
+    /// Note that StoredSongs only holds values that are present in the
+    /// "Songs" table, and does not include associated channels or preferences.
+    /// See <see cref="LoadSelectedSong"/> for loading the full data.
+    /// </summary>
     public void LoadStoredSongs()
     {
-        Console.Write("Loding stored songs... ");
-        var songs = from s in Db.Songs
-            select s;
-        var projection = songs.ProjectTo<SongDto>(
-            Program.Mapper.ConfigurationProvider);
-        StoredSongs.ReplaceAll(projection);
-        Console.WriteLine($"done. {StoredSongs.Count} songs loaded.");
+        Console.Write("\nLoading stored songs... ");
+        var songs = from s in Db.Songs 
+            select new SongDto { Id = s.Id, Name = s.Name };
+        StoredSongs.ReplaceAll(songs);
+        Console.Write($"done ({StoredSongs.Count} songs loaded).");
+    }
+
+    /// <summary>
+    /// Loads the full data for the selected song. This includes the
+    /// channels and preferences associated with the song.
+    /// </summary>
+    public void LoadSelectedSong()
+    {
+        if (SelectedSong is null) return;
+        Console.Write("\nLoading selected song... ");
+        
+        var song = Db.Songs.FirstOrDefault(s => s.Id == SelectedSong.Id);
+        if (song is null)
+        {
+            var songDto = StoredSongs.FirstOrDefault(s => s.Id == SelectedSong.Id);
+            MainVm.Song = songDto;
+        }
+        else
+        {
+            var songDto = Program.Mapper.Map<SongDto>(song);
+            MainVm.Song = songDto;
+        }
+        Console.Write("done.");
     }
     
+    /// <summary>
+    /// Creates a new song with the name specified in <see cref="NewSongName"/>
+    /// and adds it to the <see cref="StoredSongs"/> collection.
+    /// Besides, it also sets the <see cref="MainWindowViewModel.Song"/> to the newly created song.
+    /// </summary>
     public void NewSong()
     {
-        Console.Write("Creating new song... ");
+        Console.Write("\nCreating new song... ");
         var song = new SongDto
         {
             Name = NewSongName,
@@ -52,47 +99,12 @@ public class TitlebarViewModel : ViewModelBase
         };
 
         StoredSongs.Add(song);
-        
-        MainWindowViewModel.Song = song;
+        MainVm.Song = song;
         NewSongName = string.Empty;
         
-        this.RaisePropertyChanged(nameof(MainWindowViewModel.Song));
+        this.RaisePropertyChanged(nameof(MainVm.Song));
+        this.RaisePropertyChanged(nameof(StoredSongs));
         this.RaisePropertyChanged(nameof(NewSongName));
-        Console.WriteLine("done.");
-    }
-
-    public void SaveSong()
-    {
-        if (MainWindowViewModel.Song is null) return;
-        Console.WriteLine($"Saving song {MainWindowViewModel.Song.Name}... ");
-
-        try
-        {
-            var songDb = Db.Songs.FirstOrDefault(s =>
-                s.Id == MainWindowViewModel.Song.Id);
-            if (songDb is null)
-            {
-                Console.WriteLine("Song not found in database, creating new song... ");
-                var song = Program.Mapper.Map<Song>(MainWindowViewModel.Song);
-                Db.Songs.Add(song);
-                Db.SaveChanges();
-                Console.WriteLine($"Song created with id {song.Id}.");
-                MainWindowViewModel.Song.Id = song.Id;
-                MainWindowViewModel.Song.Preferences.Id = song.Preferences.Id;
-                MainWindowViewModel.Song.Preferences = Program.Mapper.Map<PreferencesDto>(song.Preferences);
-            }
-            else
-            {
-                Console.Write("Song found in database, updating song... ");
-                // Program.Mapper.Map(MainWindowViewModel.Song, songDb);
-                songDb.Name = MainWindowViewModel.SettingsViewModel.SongTitle;
-                Db.SaveChanges();
-                Console.WriteLine("done.");
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
+        Console.Write("done.");
     }
 }

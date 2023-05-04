@@ -23,17 +23,18 @@ public class DtoMappingProfile : Profile
         CreateMap<ChannelDto, Channel>()
             .BeforeMap((src, dst) =>
             {
-                src.Name ??= "New Channel";
-                // if (src.Song == null) throw new Exception("Song must be set");
+                if (src.Name == null) throw new Exception("Name must be set");
                 if (src.Volume == null) throw new Exception("Volume must be set");
+                if (src.Notes == null) throw new Exception("Notes must be set");
                 if (src.Instrument == null) throw new Exception("Instrument must be set");
+                if (src.Song == null) throw new Exception("Song must be set");
             });
 
         CreateMap<Instrument, InstrumentDto>();
         CreateMap<InstrumentDto, Instrument>()
             .BeforeMap((src, dst) =>
             {
-                src.Name ??= "New Instrument";
+                if (src.Name == null) throw new Exception("Name must be set");
                 if (src.Channel == null) throw new Exception("Channel must be set");
             });
 
@@ -41,15 +42,17 @@ public class DtoMappingProfile : Profile
         CreateMap<SongDto, Song>()
             .BeforeMap((src, dst) =>
             {
-                src.Name ??= "New Song";
+                if (src.Name == null) throw new Exception("Name must be set");
+                if (src.Channels == null) throw new Exception("Channels must be set");
+                if (src.Preferences == null) throw new Exception("Preferences must be set");
             });
         
         CreateMap<Preferences, PreferencesDto>();
         CreateMap<PreferencesDto, Preferences>()
             .BeforeMap((src, dst) =>
             {
-                if (src.Song == null) throw new Exception("Song must be set");
                 if (src.Volume == null) throw new Exception("Volume must be set");
+                if (src.Song == null) throw new Exception("Song must be set");
             });
     }
 }

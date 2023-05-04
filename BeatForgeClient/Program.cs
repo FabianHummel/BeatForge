@@ -21,8 +21,8 @@ internal static class Program
             if (args.Length > 0 && args[0] == "--reset-db")
             {
                 db.EnsureDeleted();
-                db.EnsureCreated();
             }
+            db.EnsureCreated();
         }
 
         BuildAvaloniaApp()
