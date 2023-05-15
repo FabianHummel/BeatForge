@@ -18,5 +18,6 @@
 		<Button Content="Save Song"
 		        Command="{Binding SaveSong}"/>
 		<TextBox Text="{Binding SongTitle, Mode=TwoWay}"/>
+		<NumericUpDown Increment="1.0" Text="Song Length" Value="{Binding SongLength, Mode=TwoWay}"/>
 	</StackPanel>
 </UserControl>

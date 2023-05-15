@@ -16,7 +16,7 @@ namespace BeatForgeClient.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.16");
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Channel", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Channel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,7 +39,7 @@ namespace BeatForgeClient.Migrations
                     b.ToTable("c_channel");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Instrument", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Instrument", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace BeatForgeClient.Migrations
                     b.ToTable("i_instrument");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Note", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Note", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,14 +69,14 @@ namespace BeatForgeClient.Migrations
                     b.Property<int>("ChannelId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Duration")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Duration")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Pitch")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Start")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Start")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -85,7 +85,7 @@ namespace BeatForgeClient.Migrations
                     b.ToTable("n_note");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Preferences", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Preferences", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,10 +105,13 @@ namespace BeatForgeClient.Migrations
                     b.ToTable("p_preferences");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Song", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Song", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Length")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -120,9 +123,9 @@ namespace BeatForgeClient.Migrations
                     b.ToTable("s_song");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Channel", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Channel", b =>
                 {
-                    b.HasOne("BeatForgeClient.Infrastructure.Song", "Song")
+                    b.HasOne("BeatForgeClient.Models.Song", "Song")
                         .WithMany("Channels")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -131,20 +134,20 @@ namespace BeatForgeClient.Migrations
                     b.Navigation("Song");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Instrument", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Instrument", b =>
                 {
-                    b.HasOne("BeatForgeClient.Infrastructure.Channel", "Channel")
+                    b.HasOne("BeatForgeClient.Models.Channel", "Channel")
                         .WithOne("Instrument")
-                        .HasForeignKey("BeatForgeClient.Infrastructure.Instrument", "ChannelId")
+                        .HasForeignKey("BeatForgeClient.Models.Instrument", "ChannelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Channel");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Note", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Note", b =>
                 {
-                    b.HasOne("BeatForgeClient.Infrastructure.Channel", "Channel")
+                    b.HasOne("BeatForgeClient.Models.Channel", "Channel")
                         .WithMany("Notes")
                         .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -153,18 +156,18 @@ namespace BeatForgeClient.Migrations
                     b.Navigation("Channel");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Preferences", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Preferences", b =>
                 {
-                    b.HasOne("BeatForgeClient.Infrastructure.Song", "Song")
+                    b.HasOne("BeatForgeClient.Models.Song", "Song")
                         .WithOne("Preferences")
-                        .HasForeignKey("BeatForgeClient.Infrastructure.Preferences", "SongId")
+                        .HasForeignKey("BeatForgeClient.Models.Preferences", "SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Song");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Channel", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Channel", b =>
                 {
                     b.Navigation("Instrument")
                         .IsRequired();
@@ -172,7 +175,7 @@ namespace BeatForgeClient.Migrations
                     b.Navigation("Notes");
                 });
 
-            modelBuilder.Entity("BeatForgeClient.Infrastructure.Song", b =>
+            modelBuilder.Entity("BeatForgeClient.Models.Song", b =>
                 {
                     b.Navigation("Channels");
 

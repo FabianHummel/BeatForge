@@ -2,6 +2,8 @@
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
+	xmlns:utility="clr-namespace:BeatForgeClient.Utility"
+	xmlns:models="clr-namespace:BeatForgeClient.Models"
 	x:Class="BeatForgeClient.Views.Content"
 	Background="White">
 	
@@ -18,10 +20,22 @@
 	
 	<ScrollViewer HorizontalScrollBarVisibility="Auto"
 	              VerticalScrollBarVisibility="Auto">
-		<Grid Name="Grid"
-			ColumnDefinitions="Auto"
-			RowDefinitions="Auto"
-			ShowGridLines="True">
-		</Grid>
+		<ItemsRepeater Items="{Binding ChannelNotes}"
+		               PointerPressed="Grid_OnPointerPressed"
+		               Name="Grid"
+		               Background="White">
+			<ItemsRepeater.ItemTemplate>
+				<DataTemplate DataType="{x:Type models:Note}">
+					<Panel Background="Aqua"/>
+				</DataTemplate>
+			</ItemsRepeater.ItemTemplate>
+			<ItemsRepeater.Layout>
+				<utility:NoteLayout
+					BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
+					OctaveCount="4"
+					NoteWidth="20.0"
+					NoteHeight="10.0"/>
+			</ItemsRepeater.Layout>
+		</ItemsRepeater>
 	</ScrollViewer>
 </UserControl>

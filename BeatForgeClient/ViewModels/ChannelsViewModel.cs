@@ -1,16 +1,14 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using AutoMapper.QueryableExtensions;
 using BeatForgeClient.Extensions;
 using BeatForgeClient.Infrastructure;
+using BeatForgeClient.Models;
 using ReactiveUI;
 
 namespace BeatForgeClient.ViewModels;
 
 public class ChannelsViewModel : ViewModelBase
 {
+	private ChannelDto? _selectedChannel;
 	public MainWindowViewModel MainVm { get; }
 	public BeatForgeContext Db => MainVm.Db;
 
@@ -18,7 +16,7 @@ public class ChannelsViewModel : ViewModelBase
 	{
 		MainVm = mainVm;
 
-		MainVm.PropertyChanged += (sender, args) =>
+		MainVm.PropertyChanged += (_, args) =>
 		{
 			if (args.PropertyName == nameof(MainVm.Song))
 			{
@@ -31,28 +29,31 @@ public class ChannelsViewModel : ViewModelBase
 
 	public ObservableCollection<ChannelDto> SongChannels { get; } = new();
 
-	public Channel? SelectedChannel { get; set; }
+	public ChannelDto? SelectedChannel
+	{
+		get => _selectedChannel;
+		set => this.RaiseAndSetIfChanged(ref _selectedChannel, value);
+	}
 
 	public void LoadSongChannels()
 	{
 		if (MainVm.Song == null) return;
-		Console.Write("\nLoading channels... ");
-
+		Logger.Task("Loading channels... ");
 		SongChannels.ReplaceAll(MainVm.Song.Channels);
-
-		Console.Write($"done ({SongChannels.Count} channels loaded).");
+		Logger.Complete($"({SongChannels.Count} channels loaded).");
 	}
 
 	public void NewChannel()
 	{
 		if (MainVm.Song == null) return;
-		Console.Write("\nCreating new channel... ");
-		
+		Logger.Task($"Creating new channel... ");
+
 		var channelDto = new ChannelDto
 		{
 			Name = NewChannelName,
 			Song = MainVm.Song,
 			Volume = 50.0,
+			Notes = new()
 		};
 
 		channelDto.Instrument = new()
@@ -66,6 +67,14 @@ public class ChannelsViewModel : ViewModelBase
 
 		this.RaisePropertyChanged(nameof(NewChannelName));
 		this.RaisePropertyChanged(nameof(SongChannels));
-		Console.Write("done.");
+		Logger.Complete($"{channelDto.Name} created.");
+	}
+
+	public void SaveSongChannels()
+	{
+		if (MainVm.Song == null) return;
+		Logger.Task("Saving channels... ");
+		MainVm.Song.Channels.ReplaceAll(SongChannels);
+		Logger.Complete("Channels saved.");
 	}
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BeatForgeClient.Infrastructure;
+namespace BeatForgeClient.Models;
 
 [Table("c_channel")]
 public class Channel
@@ -16,9 +16,10 @@ public class Channel
 
 public class ChannelDto
 {
+    public int? Id { get; set; }
     public string? Name { get; set; }
     public double? Volume { get; set; }
-    public List<NoteDto>? Notes { get; set; }
-    public InstrumentDto? Instrument { get; set; }
-    public SongDto? Song { get; set; }
+    public List<NoteDto> Notes { get; set; } = new();
+    public InstrumentDto Instrument { get; set; } = null!;
+    public SongDto Song { get; set; } = null!;
 }

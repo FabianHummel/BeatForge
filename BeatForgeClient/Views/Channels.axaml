@@ -45,22 +45,21 @@
 		</Border>
 		
 		<ListBox Items="{Binding SongChannels}"
-		         SelectedItem="{Binding SelectedChannel}">
+		         SelectedItem="{Binding SelectedChannel, Mode=TwoWay}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Grid ColumnDefinitions="100, 100, *"
-					      RowDefinitions="30.0">
-						<TextBox VerticalAlignment="Center" Grid.Column="0" MaxLength="32" Text="{Binding 
-								Name, Mode=TwoWay}"/>
-						<TextBox VerticalAlignment="Center" Grid.Column="1" MaxLength="32" Text="{Binding
-								Instrument.Name, Mode=TwoWay}"/>
-						<ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto">
-							<Slider Orientation="Horizontal" 
-							        VerticalAlignment="Center"
-							        Value="{Binding Volume}"
-							        Minimum="0" Maximum="100"/>
-						</ScrollViewer>
-					</Grid>
+					<StackPanel Spacing="10.0" Orientation="Horizontal" VerticalAlignment="Center">
+						<TextBox VerticalAlignment="Center" MaxLength="32" Width="150.0" 
+						         Text="{Binding Name, Mode=TwoWay}"/>
+						
+						<Slider VerticalAlignment="Center" 
+						        Orientation="Horizontal"
+						        Value="{Binding Volume}"
+						        Minimum="0" Maximum="100" Width="200.0"/>
+						
+						<TextBox VerticalAlignment="Center" MaxLength="32" Width="150.0" 
+						         Text="{Binding Instrument.Name, Mode=TwoWay}"/>
+					</StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

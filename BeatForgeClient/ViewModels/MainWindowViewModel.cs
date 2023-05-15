@@ -1,5 +1,7 @@
 ﻿using System;
+using BeatForgeClient.Extensions;
 using BeatForgeClient.Infrastructure;
+using BeatForgeClient.Models;
 using ReactiveUI;
 
 namespace BeatForgeClient.ViewModels;
@@ -18,7 +20,8 @@ public class MainWindowViewModel : ViewModelBase
         Db = new BeatForgeContext();
         Db.SavedChanges += (_, args) =>
         {
-            Console.WriteLine($"\nSaved changes ({args.EntitiesSavedCount} entities updated)");
+            Logger.Task("Saving changes... ");
+            Logger.Complete($"({args.EntitiesSavedCount} entities saved).");
         };
         TitlebarViewModel = new TitlebarViewModel(this);
         SettingsViewModel = new SettingsViewModel(this);

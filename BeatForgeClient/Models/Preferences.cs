@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BeatForgeClient.Infrastructure;
+namespace BeatForgeClient.Models;
 
 [Table("p_preferences")]
 public class Preferences
@@ -13,6 +13,7 @@ public class Preferences
 
 public class PreferencesDto
 {
+    public int? Id { get; set; }
     public double? Volume { get; set; }
     public SongDto? Song { get; set; }
 }

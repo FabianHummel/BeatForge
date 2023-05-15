@@ -1,3 +1,4 @@
+using BeatForgeClient.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeatForgeClient.Infrastructure;

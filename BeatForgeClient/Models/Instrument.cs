@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BeatForgeClient.Infrastructure;
+namespace BeatForgeClient.Models;
 
 [Table("i_instrument")]
 public class Instrument
@@ -13,6 +13,7 @@ public class Instrument
 
 public class InstrumentDto
 {
+    public int? Id { get; set; }
     public string? Name { get; set; }
     public ChannelDto? Channel { get; set; }
 }

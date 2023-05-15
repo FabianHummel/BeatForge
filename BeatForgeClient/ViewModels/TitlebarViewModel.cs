@@ -4,6 +4,7 @@ using System.Linq;
 using AutoMapper.QueryableExtensions;
 using BeatForgeClient.Extensions;
 using BeatForgeClient.Infrastructure;
+using BeatForgeClient.Models;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 
@@ -49,11 +50,11 @@ public class TitlebarViewModel : ViewModelBase
     /// </summary>
     public void LoadStoredSongs()
     {
-        Console.Write("\nLoading stored songs... ");
+        Logger.Task("Loading stored songs... ");
         var songs = from s in Db.Songs 
             select new SongDto { Id = s.Id, Name = s.Name };
         StoredSongs.ReplaceAll(songs);
-        Console.Write($"done ({StoredSongs.Count} songs loaded).");
+        Logger.Complete($"({StoredSongs.Count} songs loaded).");
     }
 
     /// <summary>
@@ -63,7 +64,7 @@ public class TitlebarViewModel : ViewModelBase
     public void LoadSelectedSong()
     {
         if (SelectedSong is null) return;
-        Console.Write("\nLoading selected song... ");
+        Logger.Task($"Loading song \"{SelectedSong.Name}\"... ");
         
         var song = Db.Songs.FirstOrDefault(s => s.Id == SelectedSong.Id);
         if (song is null)
@@ -76,7 +77,7 @@ public class TitlebarViewModel : ViewModelBase
             var songDto = Program.Mapper.Map<SongDto>(song);
             MainVm.Song = songDto;
         }
-        Console.Write("done.");
+        Logger.Complete("Song loaded.");
     }
     
     /// <summary>
@@ -86,7 +87,7 @@ public class TitlebarViewModel : ViewModelBase
     /// </summary>
     public void NewSong()
     {
-        Console.Write("\nCreating new song... ");
+        Logger.Task($"Creating new song \"{NewSongName}\"... ");
         var song = new SongDto
         {
             Name = NewSongName,
@@ -105,6 +106,6 @@ public class TitlebarViewModel : ViewModelBase
         this.RaisePropertyChanged(nameof(MainVm.Song));
         this.RaisePropertyChanged(nameof(StoredSongs));
         this.RaisePropertyChanged(nameof(NewSongName));
-        Console.Write("done.");
+        Logger.Complete("Song created.");
     }
 }

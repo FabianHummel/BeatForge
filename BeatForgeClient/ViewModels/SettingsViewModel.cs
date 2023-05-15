@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using BeatForgeClient.Extensions;
 using BeatForgeClient.Infrastructure;
+using BeatForgeClient.Models;
 using ReactiveUI;
 
 namespace BeatForgeClient.ViewModels;
@@ -34,8 +36,23 @@ public class SettingsViewModel : ViewModelBase
         }
     }
 
+    public int SongLength
+    {
+        get => MainVm.Song?.Length ?? 0;
+        set
+        {
+            if (MainVm.Song is null) return;
+            MainVm.Song.Length = value;
+            this.RaisePropertyChanged(nameof(MainVm.SettingsViewModel.SongLength));
+        }
+    }
+
     public void SaveSong()
     {
+        Logger.Task("Saving song... ");
+        MainVm.ContentViewModel.SaveChannelNotes();
+        MainVm.ChannelsViewModel.SaveSongChannels();
+        
         if (MainVm.Song is null) return;
         var songDb = Db.Songs.FirstOrDefault(s => 
             s.Id == MainVm.Song.Id);
@@ -53,8 +70,11 @@ public class SettingsViewModel : ViewModelBase
             Db.SaveChanges();
         }
         
+        Logger.Complete("Song saved.");
+        Logger.Task("Refreshing Songs... ");
         MainVm.TitlebarViewModel.LoadStoredSongs();
         MainVm.TitlebarViewModel.SelectedSong = MainVm.TitlebarViewModel
             .StoredSongs.First(s => s.Id == MainVm.Song.Id);
+        Logger.Complete("Songs refreshed.");
     }
 }

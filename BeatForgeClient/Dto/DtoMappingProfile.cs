@@ -1,6 +1,7 @@
 using System;
 using AutoMapper;
 using BeatForgeClient.Infrastructure;
+using BeatForgeClient.Models;
 
 namespace BeatForgeClient.Dto;
 

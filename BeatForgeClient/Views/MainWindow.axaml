@@ -24,11 +24,11 @@
 			DataContext="{Binding 
 				TitlebarViewModel}"/>
 		
-		<!-- <view:Channels -->
-		<!-- 	Height="300.0" -->
-		<!-- 	DockPanel.Dock="Bottom" -->
-		<!-- 	DataContext="{Binding -->
-		<!-- 		ChannelsViewModel}"/> -->
+		<view:Channels
+			Height="300.0"
+			DockPanel.Dock="Bottom"
+			DataContext="{Binding
+				ChannelsViewModel}"/>
 		
 		<view:Content
 			DataContext="{Binding

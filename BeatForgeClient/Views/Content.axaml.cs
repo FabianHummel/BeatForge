@@ -1,7 +1,11 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using BeatForgeClient.Utility;
+using BeatForgeClient.ViewModels;
 
 namespace BeatForgeClient.Views;
 
@@ -10,35 +14,16 @@ public partial class Content : UserControl
     public Content()
     {
         InitializeComponent();
-        InitializeGrid();
-        // PopulateGrid();
     }
+    
+    private ContentViewModel ViewModel => (DataContext as ContentViewModel)!;
 
-    private void InitializeGrid()
+    // ReSharper disable once SuggestBaseTypeForParameter
+    private void Grid_OnPointerPressed(object? _, PointerPressedEventArgs e)
     {
-        // 3 Octaves at 12 notes per octave
-        for (var i = 0; i < 12*3; i++)
-        {
-            Grid.RowDefinitions.Add(new RowDefinition(10.0, GridUnitType.Pixel));
-        }
-        
-        // 4 beats at 16 notes per beat
-        for (var i = 0; i < 4*16; i++)
-        {
-            Grid.ColumnDefinitions.Add(new ColumnDefinition(20.0, GridUnitType.Pixel));
-        }
-    }
-
-    private void PopulateGrid()
-    {
-        var rnd = new System.Random();
-        for (var i = 0; i < 200; i++)
-        {
-            var panel = new Panel();
-            panel.Background = Brushes.Aquamarine;
-            panel.SetValue(Grid.RowProperty, rnd.Next(0, 12*3));
-            panel.SetValue(Grid.ColumnProperty, rnd.Next(0, 4*16));
-            Grid.Children.Add(panel);
-        }
+        var point = e.GetPosition(Grid);
+        var pitch = (int) Math.Floor(point.Y / 10.0);
+        var start = (int) Math.Floor(point.X / 20.0);
+        ViewModel.ToggleNoteAt(start, pitch);
     }
 }
