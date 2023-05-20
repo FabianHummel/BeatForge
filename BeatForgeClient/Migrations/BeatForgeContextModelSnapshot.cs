@@ -22,6 +22,9 @@ namespace BeatForgeClient.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Instrument")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -37,27 +40,6 @@ namespace BeatForgeClient.Migrations
                     b.HasIndex("SongId");
 
                     b.ToTable("c_channel");
-                });
-
-            modelBuilder.Entity("BeatForgeClient.Models.Instrument", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ChannelId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChannelId")
-                        .IsUnique();
-
-                    b.ToTable("i_instrument");
                 });
 
             modelBuilder.Entity("BeatForgeClient.Models.Note", b =>
@@ -91,6 +73,12 @@ namespace BeatForgeClient.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Bpm")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("SongId")
                         .HasColumnType("INTEGER");
 
@@ -111,9 +99,6 @@ namespace BeatForgeClient.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Length")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -132,17 +117,6 @@ namespace BeatForgeClient.Migrations
                         .IsRequired();
 
                     b.Navigation("Song");
-                });
-
-            modelBuilder.Entity("BeatForgeClient.Models.Instrument", b =>
-                {
-                    b.HasOne("BeatForgeClient.Models.Channel", "Channel")
-                        .WithOne("Instrument")
-                        .HasForeignKey("BeatForgeClient.Models.Instrument", "ChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Channel");
                 });
 
             modelBuilder.Entity("BeatForgeClient.Models.Note", b =>
@@ -169,9 +143,6 @@ namespace BeatForgeClient.Migrations
 
             modelBuilder.Entity("BeatForgeClient.Models.Channel", b =>
                 {
-                    b.Navigation("Instrument")
-                        .IsRequired();
-
                     b.Navigation("Notes");
                 });
 

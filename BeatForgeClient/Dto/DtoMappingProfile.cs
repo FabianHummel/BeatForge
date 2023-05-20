@@ -1,6 +1,5 @@
 using System;
 using AutoMapper;
-using BeatForgeClient.Infrastructure;
 using BeatForgeClient.Models;
 
 namespace BeatForgeClient.Dto;
@@ -13,13 +12,9 @@ public class DtoMappingProfile : Profile
         CreateMap<NoteDto, Note>()
             .BeforeMap((src, dst) =>
             {
-                if (src.Start == null) throw new Exception("Start must be set");
-                if (src.End == null) throw new Exception("End must be set");
-                if (src.Pitch == null) throw new Exception("Pitch must be set");
-                if (src.Duration == null) throw new Exception("Duration must be set");
                 if (src.Channel == null) throw new Exception("Channel must be set");
             });
-        
+
         CreateMap<Channel, ChannelDto>();
         CreateMap<ChannelDto, Channel>()
             .BeforeMap((src, dst) =>
@@ -31,14 +26,6 @@ public class DtoMappingProfile : Profile
                 if (src.Song == null) throw new Exception("Song must be set");
             });
 
-        CreateMap<Instrument, InstrumentDto>();
-        CreateMap<InstrumentDto, Instrument>()
-            .BeforeMap((src, dst) =>
-            {
-                if (src.Name == null) throw new Exception("Name must be set");
-                if (src.Channel == null) throw new Exception("Channel must be set");
-            });
-
         CreateMap<Song, SongDto>();
         CreateMap<SongDto, Song>()
             .BeforeMap((src, dst) =>
@@ -47,7 +34,7 @@ public class DtoMappingProfile : Profile
                 if (src.Channels == null) throw new Exception("Channels must be set");
                 if (src.Preferences == null) throw new Exception("Preferences must be set");
             });
-        
+
         CreateMap<Preferences, PreferencesDto>();
         CreateMap<PreferencesDto, Preferences>()
             .BeforeMap((src, dst) =>

@@ -9,12 +9,11 @@ public class BeatForgeContext : DbContext
 
     public BeatForgeContext(DbContextOptions<BeatForgeContext> options)
         : base(options) { }
-    
+
     public DbSet<Song> Songs => Set<Song>();
     public DbSet<Channel> Channels => Set<Channel>();
     public DbSet<Note> Notes => Set<Note>();
     public DbSet<Preferences> Preferences => Set<Preferences>();
-    public DbSet<Instrument> Instruments => Set<Instrument>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -28,6 +27,6 @@ public class BeatForgeContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+
     }
 }

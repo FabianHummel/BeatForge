@@ -4,6 +4,7 @@
         xmlns:view="using:BeatForgeClient.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:utility="clr-namespace:BeatForgeClient.Utility"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatForgeClient.Views.MainWindow"
         Title="BeatForgeClient">
@@ -11,6 +12,10 @@
     <Design.DataContext>
 	    <vm:MainWindowViewModel/>
     </Design.DataContext>
+	
+	<Window.Resources>
+		<utility:PlayingConverter x:Key="PlayingConverter" />
+	</Window.Resources>
 	
 	<DockPanel LastChildFill="True">
 		<view:Settings
@@ -21,12 +26,18 @@
 		
 		<view:Titlebar 
 			DockPanel.Dock="Top"
+			IsHitTestVisible="{Binding !MainVm.ContentViewModel.Playing}"
+			Opacity="{Binding MainVm.ContentViewModel.Playing,
+			Converter={StaticResource PlayingConverter}}"
 			DataContext="{Binding 
 				TitlebarViewModel}"/>
 		
 		<view:Channels
 			Height="300.0"
 			DockPanel.Dock="Bottom"
+			IsHitTestVisible="{Binding !MainVm.ContentViewModel.Playing}"
+			Opacity="{Binding MainVm.ContentViewModel.Playing,
+			Converter={StaticResource PlayingConverter}}"
 			DataContext="{Binding
 				ChannelsViewModel}"/>
 		

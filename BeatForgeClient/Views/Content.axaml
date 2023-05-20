@@ -11,6 +11,10 @@
 		<vm:ContentViewModel/>
 	</Design.DataContext>
 	
+	<UserControl.Resources>
+		<utility:PlaybackConverter x:Key="PlaybackConverter" />
+	</UserControl.Resources>
+	
 	<UserControl.Styles>
 		<Style Selector="Panel">
 			<Setter Property="Width" Value="20.0"/>
@@ -19,23 +23,37 @@
 	</UserControl.Styles>
 	
 	<ScrollViewer HorizontalScrollBarVisibility="Auto"
-	              VerticalScrollBarVisibility="Auto">
-		<ItemsRepeater Items="{Binding ChannelNotes}"
-		               PointerPressed="Grid_OnPointerPressed"
-		               Name="Grid"
-		               Background="White">
-			<ItemsRepeater.ItemTemplate>
-				<DataTemplate DataType="{x:Type models:Note}">
-					<Panel Background="Aqua"/>
-				</DataTemplate>
-			</ItemsRepeater.ItemTemplate>
-			<ItemsRepeater.Layout>
-				<utility:NoteLayout
-					BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
-					OctaveCount="4"
-					NoteWidth="20.0"
-					NoteHeight="10.0"/>
-			</ItemsRepeater.Layout>
-		</ItemsRepeater>
+	              VerticalScrollBarVisibility="Disabled">
+		<DockPanel LastChildFill="True">
+			<Panel Background="Lightgray" Height="20.0" Width="4.0"
+			       HorizontalAlignment="Left"
+			       DockPanel.Dock="Top">
+				<Panel.RenderTransform>
+					<TranslateTransform X="{Binding Playback,
+					 Converter={StaticResource PlaybackConverter}}"/>
+				</Panel.RenderTransform>
+			</Panel>
+			<ScrollViewer HorizontalScrollBarVisibility="Disabled"
+			              VerticalScrollBarVisibility="Auto"
+			              DockPanel.Dock="Top">
+				<ItemsRepeater Items="{Binding ChannelNotes}"
+				               PointerPressed="Grid_OnPointerPressed"
+				               Name="Grid"
+				               Background="White">
+					<ItemsRepeater.ItemTemplate>
+						<DataTemplate DataType="{x:Type models:Note}">
+							<Panel Background="Aqua"/>
+						</DataTemplate>
+					</ItemsRepeater.ItemTemplate>
+					<ItemsRepeater.Layout>
+						<utility:NoteLayout
+							BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
+							OctaveCount="4"
+							NoteWidth="20.0"
+							NoteHeight="10.0"/>
+					</ItemsRepeater.Layout>
+				</ItemsRepeater>
+			</ScrollViewer>
+		</DockPanel>
 	</ScrollViewer>
 </UserControl>

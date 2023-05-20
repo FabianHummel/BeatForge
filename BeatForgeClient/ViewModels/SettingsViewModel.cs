@@ -21,6 +21,7 @@ public class SettingsViewModel : ViewModelBase
             if (args.PropertyName == nameof(MainVm.Song))
             {
                 this.RaisePropertyChanged(nameof(SongTitle));
+                this.RaisePropertyChanged(nameof(SongLength));
             }
         };
     }
@@ -38,13 +39,29 @@ public class SettingsViewModel : ViewModelBase
 
     public int SongLength
     {
-        get => MainVm.Song?.Length ?? 0;
+        get => MainVm.Song?.Preferences.Length ?? 0;
         set
         {
             if (MainVm.Song is null) return;
-            MainVm.Song.Length = value;
+            MainVm.Song.Preferences.Length = value;
             this.RaisePropertyChanged(nameof(MainVm.SettingsViewModel.SongLength));
         }
+    }
+    
+    public int SongBpm
+    {
+        get => MainVm.Song?.Preferences.Bpm ?? 0;
+        set
+        {
+            if (MainVm.Song is null) return;
+            MainVm.Song.Preferences.Bpm = value;
+            this.RaisePropertyChanged(nameof(MainVm.SettingsViewModel.SongBpm));
+        }
+    }
+
+    public void PlaySong()
+    {
+        MainVm.ContentViewModel.Playing = !MainVm.ContentViewModel.Playing;
     }
 
     public void SaveSong()

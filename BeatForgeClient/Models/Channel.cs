@@ -18,8 +18,8 @@ public class ChannelDto
 {
     public int? Id { get; set; }
     public string? Name { get; set; }
-    public double? Volume { get; set; }
+    public double Volume { get; set; }
     public List<NoteDto> Notes { get; set; } = new();
-    public InstrumentDto Instrument { get; set; } = null!;
+    public Instrument Instrument { get; set; } = Instrument.Square;
     public SongDto Song { get; set; } = null!;
 }

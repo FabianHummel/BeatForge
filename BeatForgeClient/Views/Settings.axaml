@@ -15,9 +15,12 @@
 	<StackPanel Orientation="Vertical"
 	            Spacing="5.0">
 		<TextBlock Classes="H1" Text="Settings"/>
+		<Button Content="Play Song"
+		        Command="{Binding PlaySong}"/>
 		<Button Content="Save Song"
 		        Command="{Binding SaveSong}"/>
 		<TextBox Text="{Binding SongTitle, Mode=TwoWay}"/>
 		<NumericUpDown Increment="1.0" Text="Song Length" Value="{Binding SongLength, Mode=TwoWay}"/>
+		<NumericUpDown Increment="1.0" Text="Beats per minute" Value="{Binding SongBpm, Mode=TwoWay}"/>
 	</StackPanel>
 </UserControl>
