@@ -4,46 +4,32 @@ namespace BeatForgeClient.Audio;
 
 public class SineGenerator : ISampleProvider
 {
-    private int Size { get; }
-
-    public SineGenerator(int size)
+    public short Read(float freq, int index)
     {
-        Size = size;
-    }
+        float samplesPerPeriod = 1 / freq;
+        float phase = (2.0f * MathF.PI * index) / samplesPerPeriod;
+        float value = (float)Math.Sin(phase);
 
-    public short Read(float freq, int index) => (short)(32760 * Math.Sin((2 * Math.PI * freq) / Size * index));
+        return (short)(32760 * value);
+    }
 }
 
 public class SquareGenerator : ISampleProvider
 {
-    private int Size { get; }
-
-    public SquareGenerator(int size)
-    {
-        Size = size;
-    }
-
     public short Read(float freq, int index)
     {
-        float samplesPerPeriod = Size / freq; // Number of samples per period (1/frequency)
-        float halfSamplesPerPeriod = samplesPerPeriod / 2;  // Half of the samples per period
+        float samplesPerPeriod = 1 / freq;
+        float halfSamplesPerPeriod = samplesPerPeriod / 2;
 
-        return (short)((index % samplesPerPeriod) < halfSamplesPerPeriod ? 32760 : -32760);
+        return (index % samplesPerPeriod) < halfSamplesPerPeriod ? (short)32760 : (short)-32760;
     }
 }
 
 public class TriangleGenerator : ISampleProvider
 {
-    private int Size { get; }
-
-    public TriangleGenerator(int size)
-    {
-        Size = size;
-    }
-
     public short Read(float freq, int index)
     {
-        float samplesPerPeriod = Size / freq; // Number of samples per period (1/frequency)
+        float samplesPerPeriod = 1 / freq; // Number of samples per period (1/frequency)
         float halfSamplesPerPeriod = samplesPerPeriod / 2; // Half of the samples per period
 
         float positionInPeriod = index % samplesPerPeriod;
@@ -65,20 +51,23 @@ public class TriangleGenerator : ISampleProvider
 
 public class PulseGenerator : ISampleProvider
 {
-    private int Size { get; }
-    private float DutyCycle { get; }
-
-    public PulseGenerator(int size, float dutyCycle)
-    {
-        Size = size;
-        DutyCycle = dutyCycle;
-    }
-
     public short Read(float freq, int index)
     {
-        float samplesPerPeriod = Size / freq; // Number of samples per period (1/frequency)
-        float dutySamples = samplesPerPeriod * DutyCycle;
+        float samplesPerPeriod = 1 / freq; // Number of samples per period (1/frequency)
+        float dutySamples = samplesPerPeriod / 8;
 
-        return (short)((index % samplesPerPeriod) < dutySamples ? 32760 : -32760);
+        return (index % samplesPerPeriod) < dutySamples ? (short)32760 : (short)-32760;
+    }
+}
+
+public class SawtoothGenerator : ISampleProvider
+{
+    public short Read(float freq, int index)
+    {
+        float samplesPerPeriod = 1 / freq;
+        float normalizedPosition = (index % samplesPerPeriod) / samplesPerPeriod;
+        float value = 2 * normalizedPosition - 1;
+
+        return (short)(32760 * value);
     }
 }

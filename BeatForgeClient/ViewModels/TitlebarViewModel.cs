@@ -96,6 +96,8 @@ public class TitlebarViewModel : ViewModelBase
         song.Preferences = new PreferencesDto
         {
             Volume = 50.0,
+            Length = 4,
+            Bpm = 256,
             Song = song,
         };
 

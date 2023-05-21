@@ -2,6 +2,8 @@
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
+	xmlns:utility="clr-namespace:BeatForgeClient.Utility"
+	xmlns:system="clr-namespace:System;assembly=System.Runtime"
 	x:Class="BeatForgeClient.Views.Channels"
 	Background="White"
 	BorderBrush="Lightgray"
@@ -10,6 +12,11 @@
 	<Design.DataContext>
 		<vm:ChannelsViewModel/>
 	</Design.DataContext>
+	
+	<UserControl.Resources>
+		<utility:EnumToCollectionConverter x:Key="EnumToCollection" />
+		<utility:EnumDescriptionConverter x:Key="EnumDescription" />
+	</UserControl.Resources>
 	
 	<DockPanel LastChildFill="True">
 		<Border DockPanel.Dock="Top" 
@@ -55,7 +62,21 @@
 						<Slider VerticalAlignment="Center" 
 						        Orientation="Horizontal"
 						        Value="{Binding Volume}"
-						        Minimum="0" Maximum="100" Width="200.0"/>
+						        Minimum="0.0" Maximum="1.0" Width="200.0"/>
+						
+						<ComboBox
+							VerticalAlignment="Center"
+							Items="{Binding Instrument, Mode=OneTime,
+							Converter={StaticResource EnumToCollection}}"
+							SelectedItem="{Binding Instrument, Mode=TwoWay}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock 
+										Text="{Binding 
+										Converter={StaticResource EnumDescription}}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
 					</StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>

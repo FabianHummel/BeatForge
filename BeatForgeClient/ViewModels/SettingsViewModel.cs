@@ -22,6 +22,7 @@ public class SettingsViewModel : ViewModelBase
             {
                 this.RaisePropertyChanged(nameof(SongTitle));
                 this.RaisePropertyChanged(nameof(SongLength));
+                this.RaisePropertyChanged(nameof(SongBpm));
             }
         };
     }

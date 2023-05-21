@@ -35,9 +35,6 @@
 		<view:Channels
 			Height="300.0"
 			DockPanel.Dock="Bottom"
-			IsHitTestVisible="{Binding !MainVm.ContentViewModel.Playing}"
-			Opacity="{Binding MainVm.ContentViewModel.Playing,
-			Converter={StaticResource PlayingConverter}}"
 			DataContext="{Binding
 				ChannelsViewModel}"/>
 		

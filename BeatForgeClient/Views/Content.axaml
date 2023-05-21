@@ -48,7 +48,7 @@
 					<ItemsRepeater.Layout>
 						<utility:NoteLayout
 							BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
-							OctaveCount="4"
+							OctaveCount="6"
 							NoteWidth="20.0"
 							NoteHeight="10.0"/>
 					</ItemsRepeater.Layout>

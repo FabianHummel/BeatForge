@@ -52,7 +52,7 @@ public class ChannelsViewModel : ViewModelBase
         {
             Name = NewChannelName,
             Song = MainVm.Song,
-            Volume = 50.0,
+            Volume = 0.5f,
             Instrument = Instrument.Square,
             Notes = new()
         };
