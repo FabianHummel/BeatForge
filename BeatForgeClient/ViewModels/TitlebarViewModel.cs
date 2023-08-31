@@ -77,6 +77,7 @@ public class TitlebarViewModel : ViewModelBase
             var songDto = Program.Mapper.Map<SongDto>(song);
             MainVm.Song = songDto;
         }
+        MainVm.ContentViewModel.LoadChannelNotes();
         Logger.Complete("Song loaded.");
     }
     

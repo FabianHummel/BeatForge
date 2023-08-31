@@ -4,6 +4,7 @@
 	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
 	xmlns:utility="clr-namespace:BeatForgeClient.Utility"
 	xmlns:models="clr-namespace:BeatForgeClient.Models"
+	xmlns:extensions="clr-namespace:BeatForgeClient.Extensions"
 	x:Class="BeatForgeClient.Views.Content"
 	Background="White">
 	
@@ -36,23 +37,41 @@
 			<ScrollViewer HorizontalScrollBarVisibility="Disabled"
 			              VerticalScrollBarVisibility="Auto"
 			              DockPanel.Dock="Top">
-				<ItemsRepeater Items="{Binding ChannelNotes}"
-				               PointerPressed="Grid_OnPointerPressed"
-				               Name="Grid"
-				               Background="White">
-					<ItemsRepeater.ItemTemplate>
-						<DataTemplate DataType="{x:Type models:Note}">
-							<Panel Background="Aqua"/>
-						</DataTemplate>
-					</ItemsRepeater.ItemTemplate>
-					<ItemsRepeater.Layout>
-						<utility:NoteLayout
-							BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
-							OctaveCount="6"
-							NoteWidth="20.0"
-							NoteHeight="10.0"/>
-					</ItemsRepeater.Layout>
-				</ItemsRepeater>
+				<Grid PointerPressed="Grid_OnPointerPressed"
+				      Name="Grid"
+				      Background="White">
+					<ItemsRepeater Items="{Binding OtherNotes}">
+						<ItemsRepeater.ItemTemplate>
+							<DataTemplate DataType="{x:Type models:NoteDto}">
+								<Panel Background="{Binding Channel.Color}" Opacity="0.15"/>
+							</DataTemplate>
+						</ItemsRepeater.ItemTemplate>
+						<ItemsRepeater.Layout>
+							<utility:NoteLayout
+								BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
+								OctaveCount="6"
+								NoteWidth="20.0"
+								NoteHeight="10.0"/>
+						</ItemsRepeater.Layout>
+					</ItemsRepeater>
+					<ItemsRepeater Items="{Binding ChannelNotes}">
+						<ItemsRepeater.ItemTemplate>
+							<DataTemplate DataType="{x:Type models:NoteDto}">
+								<Border BorderBrush="{Binding Channel.Color}"
+								        BorderThickness="2">
+									<Panel Background="{Binding Channel.Color}" Opacity="0.66"/>
+								</Border>
+							</DataTemplate>
+						</ItemsRepeater.ItemTemplate>
+						<ItemsRepeater.Layout>
+							<utility:NoteLayout
+								BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
+								OctaveCount="6"
+								NoteWidth="20.0"
+								NoteHeight="10.0"/>
+						</ItemsRepeater.Layout>
+					</ItemsRepeater>
+				</Grid>
 			</ScrollViewer>
 		</DockPanel>
 	</ScrollViewer>

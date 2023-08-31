@@ -7,8 +7,7 @@
 	x:Class="BeatForgeClient.Views.Channels"
 	Background="White"
 	BorderBrush="Lightgray"
-	BorderThickness="0 2 0 0"
-	KeyDown="InputElement_OnKeyDown">
+	BorderThickness="0 2 0 0">
 	
 	<Design.DataContext>
 		<vm:ChannelsViewModel/>

@@ -60,7 +60,7 @@ public class SettingsViewModel : ViewModelBase
         }
     }
 
-    public void PlaySong()
+    public void TogglePlaySong()
     {
         MainVm.ContentViewModel.Playing = !MainVm.ContentViewModel.Playing;
     }

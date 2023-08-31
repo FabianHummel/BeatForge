@@ -50,6 +50,7 @@ public class ContentViewModel : ViewModelBase
     }
 
     public ObservableCollection<NoteDto> ChannelNotes { get; } = new();
+    public ObservableCollection<NoteDto> OtherNotes { get; } = new();
 
     public int Playback
     {
@@ -211,10 +212,13 @@ public class ContentViewModel : ViewModelBase
 
     public void LoadChannelNotes()
     {
-        if (MainVm.ChannelsViewModel.SelectedChannel is null) return;
         Logger.Task("Loading notes... ");
-        ChannelNotes.ReplaceAll(MainVm.ChannelsViewModel.SelectedChannel.Notes);
-        Logger.Complete($"({ChannelNotes.Count} notes loaded).");
+        if (MainVm.ChannelsViewModel.SelectedChannel is not null)
+        {
+            ChannelNotes.ReplaceAll(MainVm.ChannelsViewModel.SelectedChannel.Notes);
+        }
+        OtherNotes.ReplaceAll(MainVm.ChannelsViewModel.SongChannels.Where(channel => channel != MainVm.ChannelsViewModel.SelectedChannel).SelectMany(channel => channel.Notes));
+        Logger.Complete($"({ChannelNotes.Count+OtherNotes.Count} notes loaded [{ChannelNotes.Count}/{OtherNotes.Count}]).");
     }
 
     public void ToggleNoteAt(int start, int pitch)
@@ -246,8 +250,7 @@ public class ContentViewModel : ViewModelBase
             PlayNoteImmediate(channel, note, generator, channel.Volume);
         }
 
-        this.RaisePropertyChanged(nameof(ChannelNotes));
-        var added = note is null ? "added" : "removed";
+        // var added = note is null ? "added" : "removed";
         // Logger.Complete($"Note {added}.");
     }
 

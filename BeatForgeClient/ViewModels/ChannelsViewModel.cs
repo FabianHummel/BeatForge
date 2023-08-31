@@ -103,18 +103,24 @@ public class ChannelsViewModel : ViewModelBase
             }
         }
         
-        this.RaisePropertyChanged(nameof(SelectedChannel.Muted));
-        this.RaisePropertyChanged(nameof(SelectedChannel.Volume));
-        this.RaisePropertyChanged(nameof(SelectedChannel.ProcessedVolume));
+        this.RaisePropertyChanged(nameof(SongChannels));
     }
 
     public void ToggleMuteCurrent()
     {
         if (SelectedChannel is null) return;
         SelectedChannel.Muted = !SelectedChannel.Muted;
+        this.RaisePropertyChanged(nameof(SongChannels));
+    }
+
+    public void MoveNotes(int amount)
+    {
+        if (SelectedChannel is null) return;
+        foreach (var note in SelectedChannel.Notes)
+        {
+            note.Pitch += amount;
+        }
         
-        this.RaisePropertyChanged(nameof(SelectedChannel.Muted));
-        this.RaisePropertyChanged(nameof(SelectedChannel.Volume));
-        this.RaisePropertyChanged(nameof(SelectedChannel.ProcessedVolume));
+        MainVm.ContentViewModel.RaisePropertyChanged(nameof(MainVm.ContentViewModel.ChannelNotes));
     }
 }

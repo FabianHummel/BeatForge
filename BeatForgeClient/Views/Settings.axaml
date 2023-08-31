@@ -16,7 +16,7 @@
 	            Spacing="5.0">
 		<TextBlock Classes="H1" Text="Settings"/>
 		<Button Content="Play Song"
-		        Command="{Binding PlaySong}"/>
+		        Command="{Binding TogglePlaySong}"/>
 		<Button Content="Save Song"
 		        Command="{Binding SaveSong}"/>
 		<TextBox Text="{Binding SongTitle, Mode=TwoWay}"/>
