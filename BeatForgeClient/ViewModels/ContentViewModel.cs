@@ -5,11 +5,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Timers;
+using Avalonia.Media.Imaging;
 using BeatForgeClient.Extensions;
 using BeatForgeClient.Audio;
 using BeatForgeClient.Models;
 using ReactiveUI;
 using SharpAudio;
+using SkiaSharp;
 using Timer = System.Timers.Timer;
 
 namespace BeatForgeClient.ViewModels;
@@ -153,6 +155,7 @@ public class ContentViewModel : ViewModelBase
             Instrument.Triangle => new TriangleGenerator(),
             Instrument.Pulse => new PulseGenerator(),
             Instrument.Sawtooth => new SawtoothGenerator(),
+            Instrument.Cringe => new CringeGenerator(),
             _ => throw new ArgumentOutOfRangeException(nameof(instrument))
         };
     }
@@ -197,132 +200,18 @@ public class ContentViewModel : ViewModelBase
 
         foreach (var note in notes)
         {
-            PlayNoteImmediate(channel, note, generator, channel.Volume);
+            PlayNoteImmediate(channel, note, generator, channel.ProcessedVolume);
         }
     }
 
-    /* private static short MergeSamples(params short[] arr)
+    private void RepaintCanvas()
     {
-        var total = arr.Aggregate<short, long>(0, (current, sample) => current + sample);
-        return (short)(total / arr.Length);
+        
     }
-
-    private static short[] MergeNotes(IEnumerable<(int start, short[] samples)> notes, long totalSize)
-    {
-        var mergedSamples = new short[totalSize];
-        var sampleCounts = new int[totalSize];
-
-        foreach (var note in notes)
-        {
-            var startIndex = note.start;
-            var endIndex = startIndex + note.samples.Length;
-
-            for (var i = startIndex; i < endIndex; i++)
-            {
-                mergedSamples[i] += note.samples[i - startIndex];
-                sampleCounts[i]++;
-            }
-        }
-
-        for (var i = 0; i < mergedSamples.Length; i++)
-        {
-            if (sampleCounts[i] == 0) continue;
-            mergedSamples[i] /= (short)sampleCounts[i];
-        }
-
-        return mergedSamples;
-    } */
-
-    /* private List<short[]>? Compile(AudioFormat format)
-    {
-        if (MainVm.Song is null) return null;
-        var totalSampleSize = BeatsToSamples(
-            MainVm.Song.Preferences.Length * 4,
-            MainVm.Song.Preferences.Bpm,
-            format.SampleRate);
-        var channelSamples = new List<short[]>(Channels.Count);
-
-        for (var i = 0; i < Channels.Count; i++)
-        {
-            var channel = Channels[i];
-            var instrument = channel.Instrument;
-            ISampleProvider generator = instrument switch
-            {
-                Instrument.Sine => new SineGenerator(totalSampleSize),
-                Instrument.Square => new SquareGenerator(totalSampleSize),
-                Instrument.Triangle => new TriangleGenerator(totalSampleSize),
-                Instrument.Pulse => new PulseGenerator(totalSampleSize, 12.0f),
-                _ => throw new ArgumentOutOfRangeException(nameof(instrument)),
-            };
-
-            var notes = from note in channel.Notes
-                let start = BeatsToSamples(
-                    note.Start,
-                    MainVm.Song.Preferences.Bpm,
-                    format.SampleRate)
-                let size = BeatsToSamples(
-                    note.Duration,
-                    MainVm.Song.Preferences.Bpm,
-                    format.SampleRate)
-                where start + size <= totalSampleSize
-                let frequency = PitchToFrequency(
-                    note.Pitch)
-                let samples = GenerateSamples(
-                    generator: generator,
-                    freq: frequency,
-                    sample: start,
-                    length: size)
-                select (start, samples);
-
-            channelSamples.Add(MergeNotes(notes, totalSampleSize));
-        }
-        
-        return channelSamples;
-    }
-
-    private void StartPlaying()
-    {
-        var channelSamples = Compile(_format);
-        if (channelSamples is null) return;
-        
-        var sources = new List<AudioSource>();
-        for (var index = 0; index < channelSamples.Count; index++)
-        {
-            var samples = channelSamples[index];
-            var channel = Channels[index];
-            var buffer = _engine.CreateBuffer();
-            buffer.BufferData(samples, _format);
-        
-            var source = _engine.CreateSource();
-            source.Volume = (float) channel.Volume / 100.0f;
-            source.QueueBuffer(buffer);
-            sources.Add(source);
-        }
-        
-        foreach (var source in sources)
-        {
-            source.Play();
-        }
-        
-        // while (sources.Any(source => source.IsPlaying()))
-        // {
-        //     Thread.Sleep(100);
-        // }
-        //
-        // foreach (var source in sources)
-        // {
-        //     source.Dispose();
-        // }
-    }
-
-    private void StopPlaying()
-    {
-        
-    } */
 
     public void LoadChannelNotes()
     {
-        if (MainVm.ChannelsViewModel.SelectedChannel == null) return;
+        if (MainVm.ChannelsViewModel.SelectedChannel is null) return;
         Logger.Task("Loading notes... ");
         ChannelNotes.ReplaceAll(MainVm.ChannelsViewModel.SelectedChannel.Notes);
         Logger.Complete($"({ChannelNotes.Count} notes loaded).");
@@ -330,7 +219,7 @@ public class ContentViewModel : ViewModelBase
 
     public void ToggleNoteAt(int start, int pitch)
     {
-        if (MainVm.ChannelsViewModel.SelectedChannel == null) return;
+        if (MainVm.ChannelsViewModel.SelectedChannel is null) return;
         var channel = MainVm.ChannelsViewModel.SelectedChannel;
         
         // Logger.Task($"Toggling note at {start} {pitch}... ");
@@ -364,7 +253,7 @@ public class ContentViewModel : ViewModelBase
 
     public void SaveChannelNotes()
     {
-        if (MainVm.ChannelsViewModel.SelectedChannel == null) return;
+        if (MainVm.ChannelsViewModel.SelectedChannel is null) return;
         Logger.Task("Saving notes... ");
         MainVm.ChannelsViewModel.SelectedChannel.Notes.ReplaceAll(ChannelNotes);
         Logger.Complete("Notes saved.");

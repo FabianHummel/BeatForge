@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using BeatForgeClient.Extensions;
 using BeatForgeClient.Infrastructure;
@@ -37,7 +38,7 @@ public class ChannelsViewModel : ViewModelBase
 
     public void LoadSongChannels()
     {
-        if (MainVm.Song == null) return;
+        if (MainVm.Song is null) return;
         Logger.Task("Loading channels... ");
         SongChannels.ReplaceAll(MainVm.Song.Channels);
         Logger.Complete($"({SongChannels.Count} channels loaded).");
@@ -45,7 +46,7 @@ public class ChannelsViewModel : ViewModelBase
 
     public void NewChannel()
     {
-        if (MainVm.Song == null) return;
+        if (MainVm.Song is null) return;
         Logger.Task($"Creating new channel... ");
 
         var channelDto = new ChannelDto
@@ -67,9 +68,53 @@ public class ChannelsViewModel : ViewModelBase
 
     public void SaveSongChannels()
     {
-        if (MainVm.Song == null) return;
+        if (MainVm.Song is null) return;
         Logger.Task("Saving channels... ");
         MainVm.Song.Channels.ReplaceAll(SongChannels);
         Logger.Complete("Channels saved.");
+    }
+
+    public void DeleteSelectedChannel()
+    {
+        if (SelectedChannel is null) return;
+        SongChannels.Remove(SelectedChannel);
+    }
+
+    public void ToggleSingleCurrent()
+    {
+        if (SelectedChannel is null) return;
+        
+        var oneOrMoreMuted = false;
+        SelectedChannel.Muted = false;
+        foreach (var channel in SongChannels)
+        {
+            if (channel != SelectedChannel && !channel.Muted)
+            {
+                channel.Muted = true;
+                oneOrMoreMuted = true;
+            }
+        }
+
+        if (!oneOrMoreMuted)
+        {
+            foreach (var channel in SongChannels)
+            {
+                channel.Muted = false;
+            }
+        }
+        
+        this.RaisePropertyChanged(nameof(SelectedChannel.Muted));
+        this.RaisePropertyChanged(nameof(SelectedChannel.Volume));
+        this.RaisePropertyChanged(nameof(SelectedChannel.ProcessedVolume));
+    }
+
+    public void ToggleMuteCurrent()
+    {
+        if (SelectedChannel is null) return;
+        SelectedChannel.Muted = !SelectedChannel.Muted;
+        
+        this.RaisePropertyChanged(nameof(SelectedChannel.Muted));
+        this.RaisePropertyChanged(nameof(SelectedChannel.Volume));
+        this.RaisePropertyChanged(nameof(SelectedChannel.ProcessedVolume));
     }
 }

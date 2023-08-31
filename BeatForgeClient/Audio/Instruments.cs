@@ -71,3 +71,16 @@ public class SawtoothGenerator : ISampleProvider
         return (short)(32760 * value);
     }
 }
+
+public class CringeGenerator : ISampleProvider
+{
+    private readonly Random _random = new();
+    public short Read(float freq, int index)
+    {
+        float samplesPerPeriod = 1 / freq;
+        float normalizedPosition = (index % samplesPerPeriod) / samplesPerPeriod;
+        float value = 2 * normalizedPosition - 1;
+
+        return (short) (32760 * value + _random.NextDouble() * 1000*_random.NextDouble());
+    }
+}

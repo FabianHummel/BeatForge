@@ -7,7 +7,8 @@
 	x:Class="BeatForgeClient.Views.Channels"
 	Background="White"
 	BorderBrush="Lightgray"
-	BorderThickness="0 2 0 0">
+	BorderThickness="0 2 0 0"
+	KeyDown="InputElement_OnKeyDown">
 	
 	<Design.DataContext>
 		<vm:ChannelsViewModel/>
@@ -16,6 +17,7 @@
 	<UserControl.Resources>
 		<utility:EnumToCollectionConverter x:Key="EnumToCollection" />
 		<utility:EnumDescriptionConverter x:Key="EnumDescription" />
+		<utility:InstanceExistsConverter x:Key="InstanceExistsConverter" />
 	</UserControl.Resources>
 	
 	<DockPanel LastChildFill="True">
@@ -39,13 +41,17 @@
 					<TextBox
 						Watermark="Channel name..."
 						Width="300.0"
-						Text="{Binding 
-							NewChannelName, Mode=TwoWay}"/>
+						Text="{Binding NewChannelName, Mode=TwoWay}"/>
 				
 					<Button 
 						Content="Add"
-						Command="{Binding 
-							NewChannel}"/>
+						Command="{Binding NewChannel}"/>
+					
+					<Button 
+						Content="Delete selected"
+						IsEnabled="{Binding SelectedChannel,
+						Converter={StaticResource InstanceExistsConverter}}"
+						Command="{Binding DeleteSelectedChannel}"/>
 				</StackPanel>
 				<Border />
 			</DockPanel>
@@ -61,7 +67,7 @@
 						
 						<Slider VerticalAlignment="Center" 
 						        Orientation="Horizontal"
-						        Value="{Binding Volume}"
+						        Value="{Binding ProcessedVolume}"
 						        Minimum="0.0" Maximum="1.0" Width="200.0"/>
 						
 						<ComboBox

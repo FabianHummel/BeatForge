@@ -22,4 +22,18 @@ public class ChannelDto
     public List<NoteDto> Notes { get; set; } = new();
     public Instrument Instrument { get; set; } = Instrument.Square;
     public SongDto Song { get; set; } = null!;
+    public bool Muted { get; set; }
+    
+    public float ProcessedVolume
+    {
+        get => Muted ? 0 : Volume;
+        set
+        {
+            Volume = value;
+            if (value > 0.0f)
+            {
+                Muted = false;
+            }
+        }
+    }
 }
