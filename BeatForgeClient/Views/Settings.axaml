@@ -19,12 +19,18 @@
 		        Command="{Binding TogglePlaySong}"/>
 		<Button Content="Save Song"
 		        Command="{Binding SaveSong}"/>
-		<TextBox Text="{Binding SongTitle, Mode=TwoWay}"/>
+		<TextBox Text="{Binding MainVm.TitlebarViewModel.SelectedSong.Name,
+				 FallbackValue='No song selected',
+				 Mode=TwoWay}"/>
 		<NumericUpDown 
 			Increment="1.0" Text="Song Length" 
-			Value="{Binding SongLength, Mode=TwoWay}"/>
+			Value="{Binding MainVm.TitlebarViewModel.SelectedSong.Preferences.Length,
+			FallbackValue=0,
+			Mode=TwoWay}"/>
 		<NumericUpDown 
 			Increment="1.0" Text="Beats per minute" 
-			Value="{Binding SongBpm, Mode=TwoWay}"/>
+			Value="{Binding MainVm.TitlebarViewModel.SelectedSong.Preferences.Bpm,
+			FallbackValue=0,
+			Mode=TwoWay}"/>
 	</StackPanel>
 </UserControl>

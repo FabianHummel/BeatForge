@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using BeatForgeClient.Extensions;
-using BeatForgeClient.Infrastructure;
 using BeatForgeClient.Models;
 using ReactiveUI;
 
@@ -11,24 +10,23 @@ public class ChannelsViewModel : ViewModelBase
 {
     private ChannelDto? _selectedChannel;
     public MainWindowViewModel MainVm { get; }
-    public BeatForgeContext Db => MainVm.Db;
 
     public ChannelsViewModel(MainWindowViewModel mainVm)
     {
         MainVm = mainVm;
 
-        MainVm.PropertyChanged += (_, args) =>
+        MainVm.TitlebarViewModel.PropertyChanged += (_, args) =>
         {
-            if (args.PropertyName == nameof(MainVm.Song))
+            if (args.PropertyName == nameof(MainVm.TitlebarViewModel.SelectedSong))
             {
-                LoadSongChannels();
+                this.RaisePropertyChanged(nameof(SongChannels));
             }
         };
     }
 
     public string NewChannelName { get; set; } = string.Empty;
 
-    public ObservableCollection<ChannelDto> SongChannels { get; } = new();
+    public ObservableCollection<ChannelDto> SongChannels => MainVm.TitlebarViewModel.SelectedSong!.Channels;
 
     public ChannelDto? SelectedChannel
     {
@@ -36,26 +34,17 @@ public class ChannelsViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _selectedChannel, value);
     }
 
-    public void LoadSongChannels()
-    {
-        if (MainVm.Song is null) return;
-        Logger.Task("Loading channels... ");
-        SongChannels.ReplaceAll(MainVm.Song.Channels);
-        Logger.Complete($"({SongChannels.Count} channels loaded).");
-    }
-
     public void NewChannel()
     {
-        if (MainVm.Song is null) return;
+        if (MainVm.TitlebarViewModel.SelectedSong is null) return;
         Logger.Task($"Creating new channel... ");
 
         var channelDto = new ChannelDto
         {
             Name = NewChannelName,
-            Song = MainVm.Song,
+            Song = MainVm.TitlebarViewModel.SelectedSong,
             Volume = 0.5f,
-            Instrument = Instrument.Square,
-            Notes = new()
+            Instrument = Instrument.Square
         };
 
         SongChannels.Add(channelDto);
@@ -64,14 +53,6 @@ public class ChannelsViewModel : ViewModelBase
         this.RaisePropertyChanged(nameof(NewChannelName));
         this.RaisePropertyChanged(nameof(SongChannels));
         Logger.Complete($"{channelDto.Name} created.");
-    }
-
-    public void SaveSongChannels()
-    {
-        if (MainVm.Song is null) return;
-        Logger.Task("Saving channels... ");
-        MainVm.Song.Channels.ReplaceAll(SongChannels);
-        Logger.Complete("Channels saved.");
     }
 
     public void DeleteSelectedChannel()

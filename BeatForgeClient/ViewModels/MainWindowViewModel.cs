@@ -1,8 +1,5 @@
-﻿using System;
-using BeatForgeClient.Extensions;
+﻿using BeatForgeClient.Extensions;
 using BeatForgeClient.Infrastructure;
-using BeatForgeClient.Models;
-using ReactiveUI;
 
 namespace BeatForgeClient.ViewModels;
 
@@ -27,13 +24,5 @@ public class MainWindowViewModel : ViewModelBase
         SettingsViewModel = new SettingsViewModel(this);
         ChannelsViewModel = new ChannelsViewModel(this);
         ContentViewModel = new ContentViewModel(this);
-    }
-    
-    private SongDto? _song;
-
-    public SongDto? Song
-    {
-        get => _song;
-        set => this.RaiseAndSetIfChanged(ref _song, value);
     }
 }

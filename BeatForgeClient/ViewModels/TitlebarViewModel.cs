@@ -1,11 +1,8 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AutoMapper.QueryableExtensions;
 using BeatForgeClient.Extensions;
 using BeatForgeClient.Infrastructure;
 using BeatForgeClient.Models;
-using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 
 namespace BeatForgeClient.ViewModels;
@@ -18,14 +15,6 @@ public class TitlebarViewModel : ViewModelBase
     public TitlebarViewModel(MainWindowViewModel mainVm)
     {
         MainVm = mainVm;
-        PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(SelectedSong))
-            {
-                LoadSelectedSong();
-            }
-        };
-        
         LoadStoredSongs();
     }
 
@@ -33,12 +22,17 @@ public class TitlebarViewModel : ViewModelBase
     public string NewSongName { get; set; } = string.Empty;
     
     public ObservableCollection<SongDto> StoredSongs { get; } = new();
+    
     private SongDto? _selectedSong;
 
     public SongDto? SelectedSong
     {
         get => _selectedSong;
-        set => this.RaiseAndSetIfChanged(ref _selectedSong, value);
+        set
+        {
+            var data = LoadFullSong(value!);
+            this.RaiseAndSetIfChanged(ref _selectedSong, data);
+        }
     }
 
     /// <summary>
@@ -46,7 +40,7 @@ public class TitlebarViewModel : ViewModelBase
     /// <see cref="StoredSongs"/> collection.
     /// Note that StoredSongs only holds values that are present in the
     /// "Songs" table, and does not include associated channels or preferences.
-    /// See <see cref="LoadSelectedSong"/> for loading the full data.
+    /// See <see cref="LoadFullSong"/> for loading the full data.
     /// </summary>
     public void LoadStoredSongs()
     {
@@ -61,30 +55,23 @@ public class TitlebarViewModel : ViewModelBase
     /// Loads the full data for the selected song. This includes the
     /// channels and preferences associated with the song.
     /// </summary>
-    public void LoadSelectedSong()
+    public SongDto LoadFullSong(SongDto selectedSong)
     {
-        if (SelectedSong is null) return;
-        Logger.Task($"Loading song \"{SelectedSong.Name}\"... ");
+        Logger.Task($"Loading song \"{selectedSong.Name}\"... ");
         
-        var song = Db.Songs.FirstOrDefault(s => s.Id == SelectedSong.Id);
-        if (song is null)
-        {
-            var songDto = StoredSongs.FirstOrDefault(s => s.Id == SelectedSong.Id);
-            MainVm.Song = songDto;
-        }
-        else
-        {
-            var songDto = Program.Mapper.Map<SongDto>(song);
-            MainVm.Song = songDto;
-        }
-        MainVm.ContentViewModel.LoadChannelNotes();
+        var song = Db.Songs.FirstOrDefault(s => s.Id == selectedSong.Id);
+        var songDto = song is null 
+            ? StoredSongs.First(s => s.Id == selectedSong.Id) 
+            : Program.Mapper.Map<SongDto>(song);
+        
         Logger.Complete("Song loaded.");
+        return songDto;
     }
     
     /// <summary>
     /// Creates a new song with the name specified in <see cref="NewSongName"/>
     /// and adds it to the <see cref="StoredSongs"/> collection.
-    /// Besides, it also sets the <see cref="MainWindowViewModel.Song"/> to the newly created song.
+    /// Besides, it also sets the <see cref="TitlebarViewModel.SelectedSong"/> to the newly created song.
     /// </summary>
     public void NewSong()
     {
@@ -103,10 +90,9 @@ public class TitlebarViewModel : ViewModelBase
         };
 
         StoredSongs.Add(song);
-        MainVm.Song = song;
+        MainVm.TitlebarViewModel.SelectedSong = song;
         NewSongName = string.Empty;
         
-        this.RaisePropertyChanged(nameof(MainVm.Song));
         this.RaisePropertyChanged(nameof(StoredSongs));
         this.RaisePropertyChanged(nameof(NewSongName));
         Logger.Complete("Song created.");

@@ -14,7 +14,7 @@ namespace BeatForgeClient.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.16");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.21");
 
             modelBuilder.Entity("BeatForgeClient.Models.Channel", b =>
                 {
@@ -32,7 +32,7 @@ namespace BeatForgeClient.Migrations
                     b.Property<int>("SongId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Volume")
+                    b.Property<float>("Volume")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");

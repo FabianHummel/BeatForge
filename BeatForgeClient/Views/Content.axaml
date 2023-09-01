@@ -4,9 +4,9 @@
 	xmlns:vm="clr-namespace:BeatForgeClient.ViewModels"
 	xmlns:utility="clr-namespace:BeatForgeClient.Utility"
 	xmlns:models="clr-namespace:BeatForgeClient.Models"
-	xmlns:extensions="clr-namespace:BeatForgeClient.Extensions"
 	x:Class="BeatForgeClient.Views.Content"
-	Background="White">
+	Background="White"
+	AttachedToVisualTree="Content_OnInitialized">
 	
 	<Design.DataContext>
 		<vm:ContentViewModel/>
@@ -48,13 +48,15 @@
 						</ItemsRepeater.ItemTemplate>
 						<ItemsRepeater.Layout>
 							<utility:NoteLayout
-								BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
+								BeatCount="{Binding MainVm.TitlebarViewModel.SelectedSong.Preferences.Length,
+								FallbackValue=0}"
 								OctaveCount="6"
 								NoteWidth="20.0"
 								NoteHeight="10.0"/>
 						</ItemsRepeater.Layout>
 					</ItemsRepeater>
-					<ItemsRepeater Items="{Binding ChannelNotes}">
+					<ItemsRepeater Items="{Binding ChannelNotes}"
+					               Name="Notes">
 						<ItemsRepeater.ItemTemplate>
 							<DataTemplate DataType="{x:Type models:NoteDto}">
 								<Border BorderBrush="{Binding Channel.Color}"
@@ -65,7 +67,8 @@
 						</ItemsRepeater.ItemTemplate>
 						<ItemsRepeater.Layout>
 							<utility:NoteLayout
-								BeatCount="{Binding MainVm.SettingsViewModel.SongLength}"
+								BeatCount="{Binding MainVm.TitlebarViewModel.SelectedSong.Preferences.Length,
+								FallbackValue=0}"
 								OctaveCount="6"
 								NoteWidth="20.0"
 								NoteHeight="10.0"/>
