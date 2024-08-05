@@ -17,7 +17,7 @@ public class ContentViewModel : ViewModelBase
 {
     private int _playback = 0;
     private bool _playing = false;
-    public readonly Timer _timer = new();
+    private readonly Timer _timer = new();
     private readonly AudioEngine _engine = AudioEngine.CreateDefault();
     private readonly List<(AudioSource, AudioBuffer)> _disposables = new();
     private readonly AudioFormat _format = new AudioFormat
@@ -38,17 +38,42 @@ public class ContentViewModel : ViewModelBase
         
         MainVm.ChannelsViewModel.PropertyChanged += (_, args) =>
         {
-            if (args.PropertyName == nameof(MainVm.ChannelsViewModel.SelectedChannel))
+            if (args.PropertyName == nameof(ChannelsViewModel.SelectedChannel))
             {
-                this.RaisePropertyChanged(nameof(ChannelNotes));
+                if (MainVm.ChannelsViewModel.SelectedChannel != null)
+                {
+                    ChannelNotes.ReplaceAll(MainVm.ChannelsViewModel.SelectedChannel.Notes);
+                }
+                
                 OtherNotes.ReplaceAll(MainVm.ChannelsViewModel.SongChannels
                     .Where(channel => channel.Id != MainVm.ChannelsViewModel.SelectedChannel?.Id)
                     .SelectMany(channel => channel.Notes));
             }
         };
+
+        MainVm.TitlebarViewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(TitlebarViewModel.SelectedSong))
+            {
+                ChannelNotes.Clear();
+                OtherNotes.Clear();
+                MainVm.ChannelsViewModel.RaisePropertyChanged(nameof(ChannelsViewModel.SelectedChannel));
+            }
+        };
+
+        PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ChannelNotes))
+            {
+                if (MainVm.ChannelsViewModel.SelectedChannel != null)
+                {
+                    MainVm.ChannelsViewModel.SelectedChannel.Notes.ReplaceAll(ChannelNotes);
+                }
+            }
+        };
     }
 
-    public ObservableCollection<NoteDto>? ChannelNotes => MainVm.ChannelsViewModel.SelectedChannel?.Notes;
+    public ObservableCollection<NoteDto> ChannelNotes { get; } = new();
     public ObservableCollection<NoteDto> OtherNotes { get; } = new();
 
     public int Playback
@@ -130,7 +155,7 @@ public class ContentViewModel : ViewModelBase
         var buffer = new short[size];
         for (var i = 0; i < size; i++)
         {
-            buffer[i] = generator.Read(freq / size / bpm * 60.0f, start + i);
+            buffer[i] = generator.Read(freq / size / bpm * 60.0f, i, size);
         }
 
         return buffer;
@@ -154,7 +179,8 @@ public class ContentViewModel : ViewModelBase
             Instrument.Triangle => new TriangleGenerator(),
             Instrument.Pulse => new PulseGenerator(),
             Instrument.Sawtooth => new SawtoothGenerator(),
-            Instrument.Cringe => new CringeGenerator(),
+            Instrument.SynthKick => new SynthKickGenerator(),
+            Instrument.Snare => new SnareGenerator(),
             _ => throw new ArgumentOutOfRangeException(nameof(instrument))
         };
     }
@@ -203,32 +229,64 @@ public class ContentViewModel : ViewModelBase
         }
     }
 
-    public void ToggleNoteAt(int start, int pitch)
+    public bool NoteExistsAt(int start, int pitch, out NoteDto? note)
     {
-        if (MainVm.ChannelsViewModel.SelectedChannel is null) return;
+        if (MainVm.ChannelsViewModel.SelectedChannel is null) throw new NullReferenceException();
         var channel = MainVm.ChannelsViewModel.SelectedChannel;
-        
-        var note = ChannelNotes!.FirstOrDefault(n =>
+
+        note = ChannelNotes.FirstOrDefault(n =>
             n.Channel == channel &&
             n.Start == start &&
             n.Pitch == pitch);
-        if (note is not null)
-        {
-            ChannelNotes!.Remove(note);
-        }
-        else
-        {
-            note = new NoteDto
-            {
-                Start = start,
-                Pitch = pitch,
-                Channel = MainVm.ChannelsViewModel.SelectedChannel,
-                Duration = 1
-            };
-            ChannelNotes!.Add(note);
 
-            var generator = CreateGenerator(channel.Instrument);
-            PlayNoteImmediate(note, generator, channel.Volume);
+        return note != null;
+    }
+    
+    public bool SetNoteAt(int start, int pitch)
+    {
+        try
+        {
+            if (!NoteExistsAt(start, pitch, out _))
+            {
+                var @new = new NoteDto
+                {
+                    Start = start,
+                    Pitch = pitch,
+                    Channel = MainVm.ChannelsViewModel.SelectedChannel!,
+                    Duration = 1
+                };
+                ChannelNotes.Add(@new);
+                this.RaisePropertyChanged(nameof(ChannelNotes));
+        
+                var generator = CreateGenerator(@new.Channel.Instrument);
+                PlayNoteImmediate(@new, generator, @new.Channel.Volume);
+                return true;
+            }
+
+            return false;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool RemoveNoteAt(int start, int pitch)
+    {
+        try
+        {
+            if (NoteExistsAt(start, pitch, out var note))
+            {
+                var successful = ChannelNotes.Remove(note!);
+                this.RaisePropertyChanged(nameof(ChannelNotes));
+                return successful;
+            }
+
+            return false;
+        }
+        catch (Exception)
+        {
+            return false;
         }
     }
 }

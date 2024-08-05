@@ -7,6 +7,8 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.Threading;
+using BeatForgeClient.Models;
 using BeatForgeClient.Utility;
 using BeatForgeClient.ViewModels;
 
@@ -50,32 +52,51 @@ public partial class Content : UserControl
     
     private ContentViewModel ViewModel => (DataContext as ContentViewModel)!;
 
-    // ReSharper disable once SuggestBaseTypeForParameter
-    private void Grid_OnPointerPressed(object? _, PointerPressedEventArgs e)
+    private void Content_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        ViewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ContentViewModel.Playback))
+            {
+                foreach (var child in Notes.Children)
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        if (child is Border { DataContext: NoteDto data } note && data.Start == ViewModel.Playback)
+                        {
+                            _highlightAnimation.RunAsync(note, null);
+                        }
+                    });
+                }
+            }
+        };
+    }
+
+    private void Handle(PointerEventArgs e)
     {
         var point = e.GetPosition(Grid);
         var pitch = (int) Math.Floor(point.Y / 10.0);
         var start = (int) Math.Floor(point.X / 20.0);
-        ViewModel.ToggleNoteAt(start, pitch);
-    }
-
-    private void HighlightNotesAtHead()
-    {
-        foreach (var child in Notes.Children)
+        
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
-            var animatable = child as Animatable;
-            _highlightAnimation.RunAsync(animatable, null);
+            ViewModel.SetNoteAt(start, pitch);
+        }
+        
+        else if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
+        {
+            ViewModel.RemoveNoteAt(start, pitch);
         }
     }
-
-    private void Content_OnInitialized(object? sender, VisualTreeAttachmentEventArgs e)
+    
+    // ReSharper disable once SuggestBaseTypeForParameter
+    private void Grid_OnPointerPressed(object? _, PointerPressedEventArgs e)
     {
-        // ViewModel.PropertyChanged += (_, args) =>
-        // {
-        //     if (args.PropertyName == nameof(ViewModel.Playback))
-        //     {
-        //         HighlightNotesAtHead();
-        //     }
-        // };
+        Handle(e);
+    }
+
+    private void Grid_OnPointerMoved(object? _, PointerEventArgs e)
+    {
+        Handle(e);
     }
 }

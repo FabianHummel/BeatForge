@@ -14,6 +14,8 @@ public enum Instrument
     Pulse,
     [Description("Sawtooth Wave")]
     Sawtooth,
-    [Description("Cringe Wave")]
-    Cringe
+    [Description("Synth Kick")]
+    SynthKick,
+    [Description("Snare")]
+    Snare
 }

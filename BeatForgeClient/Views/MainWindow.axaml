@@ -37,6 +37,7 @@
 		<view:Channels
 			Grid.Row="3"
 			Grid.Column="0"
+			Grid.ColumnSpan="2"
 			DataContext="{Binding ChannelsViewModel}"/>
 		
 		<view:Content
@@ -45,7 +46,7 @@
 			DataContext="{Binding ContentViewModel}"/>
 		
 		<view:Settings
-			Grid.Row="0" Grid.RowSpan="3"
+			Grid.Row="0" Grid.RowSpan="2"
 			Grid.Column="1"
 			Width="200.0"
 			DataContext="{Binding SettingsViewModel}"/>

@@ -2,5 +2,5 @@ namespace BeatForgeClient.Audio;
 
 public interface ISampleProvider
 {
-    short Read(float freq, int sample);
+    short Read(float freq, int sample, int size);
 }

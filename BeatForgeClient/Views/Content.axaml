@@ -6,7 +6,7 @@
 	xmlns:models="clr-namespace:BeatForgeClient.Models"
 	x:Class="BeatForgeClient.Views.Content"
 	Background="White"
-	AttachedToVisualTree="Content_OnInitialized">
+	AttachedToVisualTree="Content_OnAttachedToVisualTree">
 	
 	<Design.DataContext>
 		<vm:ContentViewModel/>
@@ -38,6 +38,7 @@
 			              VerticalScrollBarVisibility="Auto"
 			              DockPanel.Dock="Top">
 				<Grid PointerPressed="Grid_OnPointerPressed"
+				      PointerMoved="Grid_OnPointerMoved"
 				      Name="Grid"
 				      Background="White">
 					<ItemsRepeater Items="{Binding OtherNotes}">

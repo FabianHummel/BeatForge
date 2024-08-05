@@ -4,11 +4,11 @@ namespace BeatForgeClient.Audio;
 
 public class SineGenerator : ISampleProvider
 {
-    public short Read(float freq, int index)
+    public short Read(float freq, int index, int size)
     {
         float samplesPerPeriod = 1 / freq;
         float phase = (2.0f * MathF.PI * index) / samplesPerPeriod;
-        float value = (float)Math.Sin(phase);
+        float value = MathF.Sin(phase);
 
         return (short)(32760 * value);
     }
@@ -16,7 +16,7 @@ public class SineGenerator : ISampleProvider
 
 public class SquareGenerator : ISampleProvider
 {
-    public short Read(float freq, int index)
+    public short Read(float freq, int index, int size)
     {
         float samplesPerPeriod = 1 / freq;
         float halfSamplesPerPeriod = samplesPerPeriod / 2;
@@ -27,7 +27,7 @@ public class SquareGenerator : ISampleProvider
 
 public class TriangleGenerator : ISampleProvider
 {
-    public short Read(float freq, int index)
+    public short Read(float freq, int index, int size)
     {
         float samplesPerPeriod = 1 / freq; // Number of samples per period (1/frequency)
         float halfSamplesPerPeriod = samplesPerPeriod / 2; // Half of the samples per period
@@ -51,7 +51,7 @@ public class TriangleGenerator : ISampleProvider
 
 public class PulseGenerator : ISampleProvider
 {
-    public short Read(float freq, int index)
+    public short Read(float freq, int index, int size)
     {
         float samplesPerPeriod = 1 / freq; // Number of samples per period (1/frequency)
         float dutySamples = samplesPerPeriod / 8;
@@ -62,7 +62,7 @@ public class PulseGenerator : ISampleProvider
 
 public class SawtoothGenerator : ISampleProvider
 {
-    public short Read(float freq, int index)
+    public short Read(float freq, int index, int size)
     {
         float samplesPerPeriod = 1 / freq;
         float normalizedPosition = (index % samplesPerPeriod) / samplesPerPeriod;
@@ -72,15 +72,37 @@ public class SawtoothGenerator : ISampleProvider
     }
 }
 
-public class CringeGenerator : ISampleProvider
+public class SynthKickGenerator : ISampleProvider
 {
-    private readonly Random _random = new();
-    public short Read(float freq, int index)
+    public short Read(float freq, int index, int size)
     {
-        float samplesPerPeriod = 1 / freq;
-        float normalizedPosition = (index % samplesPerPeriod) / samplesPerPeriod;
-        float value = 2 * normalizedPosition - 1;
+        // int phase = index / (20 + index / 100); // laser
+        // int phase = index / (1 + index / 1000); // chirp
+        float phase = (index - 50_000f) / index * (500f * freq);
+        float @base = (index - 2000) / 150f;
+        float mult = 32760 - Math.Min(@base * @base * @base, 32760);
+        float value = MathF.Sin(phase) * mult;
+        return (short)value;
+    }
+}
 
-        return (short) (32760 * value + _random.NextDouble() * 1000*_random.NextDouble());
+public class SnareGenerator : ISampleProvider
+{
+    private static readonly Random _random = new();
+    private static readonly short[] _sample = new short[8096];
+
+    public SnareGenerator()
+    {
+        for (var i = 0; i < _sample.Length; i++)
+        {
+            _sample[i] = (short) _random.Next();
+        }
+    }
+
+    public short Read(float freq, int index, int size)
+    {
+        float mult = (size-index) / (float)size;
+        float value = _sample[index%8096] * mult;
+        return (short)value;
     }
 }

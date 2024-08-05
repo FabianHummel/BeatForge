@@ -17,7 +17,7 @@ public class ChannelsViewModel : ViewModelBase
 
         MainVm.TitlebarViewModel.PropertyChanged += (_, args) =>
         {
-            if (args.PropertyName == nameof(MainVm.TitlebarViewModel.SelectedSong))
+            if (args.PropertyName == nameof(TitlebarViewModel.SelectedSong))
             {
                 this.RaisePropertyChanged(nameof(SongChannels));
             }
@@ -102,6 +102,6 @@ public class ChannelsViewModel : ViewModelBase
             note.Pitch += amount;
         }
         
-        MainVm.ContentViewModel.RaisePropertyChanged(nameof(MainVm.ContentViewModel.ChannelNotes));
+        MainVm.ContentViewModel.ChannelNotes.ReplaceAll(SelectedChannel.Notes);
     }
 }
